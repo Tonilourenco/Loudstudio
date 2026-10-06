@@ -13,6 +13,8 @@ from .audio import Backend
 PRE_S = 0.1     # silence before each stimulus
 POST_S = 0.6    # silence after (must exceed the longest latency you expect)
 
+ALL_MEASUREMENTS = ("latency", "gain", "thd", "response", "correlation")
+
 
 class Measurer:
     """Runs measurements against a back-end.
@@ -179,8 +181,10 @@ class Measurer:
 
     # -- everything --------------------------------------------------------
 
-    def run_all(self, name: str, thd_freqs=(100.0, 1000.0, 10000.0), thd_levels=None,
-                align_delay_samples: float | None = None, progress=print) -> dict:
+    def run(self, name: str, kinds=ALL_MEASUREMENTS,
+            thd_freqs=(100.0, 1000.0, 10000.0), thd_levels=None,
+            align_delay_samples: float | None = None, progress=print) -> dict:
+        """Run the selected measurements (any of ``ALL_MEASUREMENTS``)."""
         res = {
             "name": name,
             "timestamp": _dt.datetime.now().isoformat(timespec="seconds"),
@@ -190,26 +194,37 @@ class Measurer:
                 "loopback_reference": self.b.routing.has_reference,
             },
         }
-        progress("Measuring latency...")
-        res["latency"] = self.latency()
-        progress("Measuring gain...")
-        res["gain"] = self.gain()
-        progress("Measuring harmonic distortion...")
-        res["thd"] = self.thd(thd_freqs, thd_levels)
-        if getattr(self, "_last_spectrum", None) is not None:
-            h = self._last_spectrum
-            keep = (h.spectrum_freq >= 10) & (h.spectrum_freq <= 24000)
-            # Max-pool down to ~4000 points so harmonic peaks survive.
-            f, db = h.spectrum_freq[keep], h.spectrum_dbfs[keep]
-            step = max(1, len(f) // 4000)
-            m = len(f) // step * step
-            res["thd_spectrum"] = {
-                "fundamental_hz": h.fundamental_hz,
-                "freq": f[:m].reshape(-1, step).mean(axis=1).tolist(),
-                "dbfs": db[:m].reshape(-1, step).max(axis=1).tolist(),
-            }
-        progress("Measuring frequency & phase response...")
-        res["response"] = self.response(delay_samples=align_delay_samples)
-        progress("Measuring correlation & coherence...")
-        res["correlation"] = self.correlation()
+        if "latency" in kinds:
+            progress("Measuring latency...")
+            res["latency"] = self.latency()
+        if "gain" in kinds:
+            progress("Measuring gain...")
+            res["gain"] = self.gain()
+        if "thd" in kinds:
+            progress("Measuring harmonic distortion...")
+            res["thd"] = self.thd(thd_freqs, thd_levels)
+            if getattr(self, "_last_spectrum", None) is not None:
+                res["thd_spectrum"] = self._spectrum_dict(self._last_spectrum)
+        if "response" in kinds:
+            progress("Measuring frequency & phase response...")
+            res["response"] = self.response(delay_samples=align_delay_samples)
+        if "correlation" in kinds:
+            progress("Measuring correlation & coherence...")
+            res["correlation"] = self.correlation()
         return res
+
+    def run_all(self, name: str, **kwargs) -> dict:
+        return self.run(name, ALL_MEASUREMENTS, **kwargs)
+
+    @staticmethod
+    def _spectrum_dict(h: an.HarmonicResult) -> dict:
+        keep = (h.spectrum_freq >= 10) & (h.spectrum_freq <= 24000)
+        # Max-pool down to ~4000 points so harmonic peaks survive.
+        f, db = h.spectrum_freq[keep], h.spectrum_dbfs[keep]
+        step = max(1, len(f) // 4000)
+        m = len(f) // step * step
+        return {
+            "fundamental_hz": h.fundamental_hz,
+            "freq": f[:m].reshape(-1, step).mean(axis=1).tolist(),
+            "dbfs": db[:m].reshape(-1, step).max(axis=1).tolist(),
+        }

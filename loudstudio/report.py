@@ -80,13 +80,6 @@ def print_comparison(results: list[dict]) -> None:
 # Plots
 # --------------------------------------------------------------------------
 
-def _plt():
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    return plt
-
-
 def _log_axis(ax, label):
     ax.set_xscale("log")
     ax.set_xlim(20, 20000)
@@ -97,14 +90,33 @@ def _log_axis(ax, label):
 
 
 def plot(results: list[dict], path: str | Path, relative_to_first: bool = False) -> Path:
-    """One figure with magnitude, phase, group delay, coherence and THD spectrum.
+    """Save the result plot (see :func:`draw`) as an image."""
+    from matplotlib.figure import Figure  # no pyplot: safe alongside the GUI
+
+    fig = Figure(figsize=(14, 12))
+    draw(fig, results, relative_to_first, summary=True)
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=110)
+    return path
+
+
+def draw(fig, results: list[dict], relative_to_first: bool = False,
+         summary: bool = True) -> None:
+    """Draw magnitude, phase, group delay, coherence and THD spectrum on ``fig``.
 
     With several results the curves are overlaid; ``relative_to_first``
     plots magnitude/phase as differences to the first result instead.
+    ``summary`` adds a text panel with the key numbers.
     """
-    plt = _plt()
-    fig, axes = plt.subplots(3, 2, figsize=(14, 12))
-    (ax_mag, ax_ph), (ax_gd, ax_coh), (ax_thd, ax_txt) = axes
+    fig.clear()
+    if not results:
+        return
+    gs = fig.add_gridspec(3, 2)
+    ax_mag, ax_ph = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1])
+    ax_gd, ax_coh = fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[1, 1])
+    # Without the summary panel the spectrum gets the whole bottom row.
+    ax_thd = fig.add_subplot(gs[2, 0] if summary else gs[2, :])
     base = results[0].get("response") if relative_to_first else None
 
     for r in results:
@@ -145,17 +157,13 @@ def plot(results: list[dict], path: str | Path, relative_to_first: bool = False)
         if ax.get_legend_handles_labels()[0]:
             ax.legend(fontsize=8)
 
-    ax_txt.axis("off")
-    lines = []
-    for r in results:
-        lines.append(r.get("name", "?"))
-        lines += [f"  {k}: {v}" for k, v in summary_rows(r)]
-        lines.append("")
-    ax_txt.text(0, 1, "\n".join(lines), va="top", family="monospace", fontsize=7)
-
+    if summary:
+        ax_txt = fig.add_subplot(gs[2, 1])
+        ax_txt.axis("off")
+        lines = []
+        for r in results:
+            lines.append(r.get("name", "?"))
+            lines += [f"  {k}: {v}" for k, v in summary_rows(r)]
+            lines.append("")
+        ax_txt.text(0, 1, "\n".join(lines), va="top", family="monospace", fontsize=7)
     fig.tight_layout()
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=110)
-    plt.close(fig)
-    return path

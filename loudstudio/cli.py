@@ -2,6 +2,7 @@
 
 Examples::
 
+    loudstudio gui
     loudstudio devices
     loudstudio run --name "Desk A ch1" --out 1 --in 1 --ref-out 2 --ref-in 2
     loudstudio compare results/desk-a-ch1.json results/desk-b-ch1.json
@@ -141,6 +142,11 @@ def cmd_compare(a):
     print(f"\nSaved {png}")
 
 
+def cmd_gui(a):
+    from .gui import main as gui_main
+    gui_main()
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="loudstudio", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -185,6 +191,8 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("correlation", help="input/output correlation and coherence")
     _add_common(s)
     s.set_defaults(func=cmd_correlation)
+
+    sub.add_parser("gui", help="open the graphical interface").set_defaults(func=cmd_gui)
 
     c = sub.add_parser("compare", help="compare saved results")
     c.add_argument("files", nargs="+")

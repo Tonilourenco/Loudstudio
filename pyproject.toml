@@ -20,6 +20,7 @@ test = ["pytest"]
 
 [project.scripts]
 loudstudio = "loudstudio.cli:main"
+loudstudio-gui = "loudstudio.gui:main"
 
 [tool.setuptools]
 packages = ["loudstudio"]

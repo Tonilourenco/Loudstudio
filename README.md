@@ -32,6 +32,30 @@ You can try everything without hardware by adding `--simulate`:
 loudstudio run --name "demo" --simulate --sim-eq 1000:6:1.4 --sim-latency 2.5
 ```
 
+## GUI
+
+```bash
+loudstudio gui        # or: loudstudio-gui
+```
+
+The settings column on the left holds the soundcard device, channel routing,
+the loopback reference, the stimulus level, calibration and the measurement
+name. Click **Run all measurements**, or run a single measurement with the
+Latency, Gain, THD, Response or Correlation buttons. Single measurements with
+the same name are merged into one result.
+
+Each result is added to the **Results** list. Select several (Ctrl/Shift-click)
+to overlay them and see them side by side in the **Summary** table. Tick *Plot
+relative to first selected* to see the differences. **Save**, **Load** and
+**Export PNG** use the same JSON files as the command line.
+
+To measure EQ phase shift, first run the desk with EQ bypassed. Then choose
+that result under *Align phase to* before measuring with the EQ on.
+
+Tick *Use simulated desk* to try everything without hardware. It is on
+automatically when no soundcard is available. The GUI uses Tkinter, which
+ships with Python on Windows and macOS. On Linux, install `python3-tk`.
+
 ## Wiring
 
 ```
