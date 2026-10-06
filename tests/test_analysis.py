@@ -104,3 +104,15 @@ def test_level_sweep_clean_desk_not_reached():
     sw = Measurer(SimulatedBackend(FS, desk)).level_sweep(start_dbfs=-20, stop_dbfs=-2, step_db=6)
     assert sw["clip_input_dbfs"] is None
     assert sw["limited_by"] == "not reached"
+
+
+def test_simulated_saturation_scales_with_drive():
+    # Distortion must come from the drive setting: near-zero drive is near-clean,
+    # and more drive means more distortion.
+    def thd(drive):
+        desk = SimulatedDesk(drive=drive)
+        return Measurer(SimulatedBackend(FS, desk)).thd()[0]["thd_percent"]
+
+    low, mid, high = thd(0.05), thd(0.3), thd(1.0)
+    assert low < 0.05
+    assert low < mid < high

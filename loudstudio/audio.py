@@ -125,8 +125,10 @@ class SimulatedDesk:
             b, a = peaking_eq(f0, g, q, fs)
             y = sps.lfilter(b, a, y)
         if self.drive > 0:
-            # Asymmetric soft clip -> both even and odd harmonics.
-            y = (np.tanh(self.drive * (y + 0.05 * y ** 2))) / self.drive
+            # Asymmetric soft clip -> both even and odd harmonics. The
+            # asymmetry is scaled by drive so every harmonic grows with it
+            # (an unscaled y**2 term would add a fixed H2 at any drive).
+            y = (np.tanh(self.drive * (y + 0.05 * self.drive * y ** 2))) / self.drive
         if self.clip_dbfs is not None:
             rail = 10 ** (self.clip_dbfs / 20)
             y = np.clip(y, -rail, rail)
