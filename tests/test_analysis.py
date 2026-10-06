@@ -77,3 +77,30 @@ def test_simulated_desk_end_to_end(use_ref):
     assert np.ptp(np.array(resp["magnitude_db"])[np.array(resp["freq"]) > 40]) < 0.2
     assert m.correlation()["correlation"] > 0.999
     assert m.thd()[0]["thd_percent"] < 0.01
+
+
+def test_level_sweep_finds_desk_clip_point():
+    # +10 dB gain into an output stage that hard-clips at -6 dBFS:
+    # the sine starts clipping at -16 dBFS in, and 1 % THD+N needs a few
+    # tenths of a dB more.
+    desk = SimulatedDesk(gain_db=10.0, drive=0.0, clip_dbfs=-6.0, noise_dbfs=-80)
+    sw = Measurer(SimulatedBackend(FS, desk)).level_sweep(start_dbfs=-60, stop_dbfs=0, step_db=3)
+    assert -16.0 < sw["clip_input_dbfs"] < -15.3
+    assert sw["clip_output_dbfs"] == pytest.approx(-6.0, abs=0.5)
+    assert sw["limited_by"] == "desk"
+    # Low-level points are noisy (THD+N > 1 % at -60 dBFS) but must not count as clipping.
+    assert sw["points"][0]["thdn_percent"] > 1.0
+
+
+def test_level_sweep_reports_soundcard_input_limit():
+    desk = SimulatedDesk(gain_db=10.0, drive=0.0)  # desk clean, interface input clips at 0 dBFS
+    sw = Measurer(SimulatedBackend(FS, desk)).level_sweep(start_dbfs=-20, stop_dbfs=0, step_db=2)
+    assert sw["limited_by"] == "soundcard input"
+    assert sw["clip_input_dbfs"] == pytest.approx(-10.0, abs=0.5)
+
+
+def test_level_sweep_clean_desk_not_reached():
+    desk = SimulatedDesk(gain_db=-6.0, drive=0.0)
+    sw = Measurer(SimulatedBackend(FS, desk)).level_sweep(start_dbfs=-20, stop_dbfs=-2, step_db=6)
+    assert sw["clip_input_dbfs"] is None
+    assert sw["limited_by"] == "not reached"

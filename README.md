@@ -11,6 +11,7 @@ It measures:
 | **Harmonic distortion** | sines at chosen frequencies and levels | THD, THD+N, individual harmonics H2…H9 in dBc, spectrum |
 | **Frequency & phase response** | exponential sine sweep | magnitude, phase (latency removed), excess group delay, for EQ curves and EQ phase shift |
 | **Correlation & coherence** | pink noise | time-aligned correlation coefficient (+1 identical, −1 polarity inverted), polarity, coherence vs frequency |
+| **Clip point (level sweep)** | 1 kHz sine stepped up in level | input/output level where THD+N reaches 1 % (dBFS and dBu), 1 dB compression point, and whether the desk or the soundcard ran out of headroom first |
 | **Round-trip latency** | sweep + GCC-PHAT cross-correlation | total and desk-only latency to sub-sample accuracy, jitter across runs |
 
 Every run is saved as JSON plus a PNG plot, and any number of runs can be
@@ -113,6 +114,39 @@ loudstudio thd $COMMON --freqs 100,1000,10000 --levels=-30,-18,-6,0
 ```
 
 Note: negative lists need `=`, as in `--levels=-30,-18`.
+
+### Finding the clip point
+
+```bash
+# add a level sweep to an existing result
+loudstudio sweep $COMMON --add-to results/desk-a-flat.json
+# or include it in a full run
+loudstudio run --name "Desk A flat" $COMMON --sweep
+# options: --start -40 --stop 0 --step 2 --sweep-freq 1000 --threshold 1
+```
+
+The GUI has the same feature as the **Clip sweep** button.
+
+**Mute or disconnect speakers and headphones first.** The sweep drives the
+desk into clipping on purpose.
+
+How the sweep works:
+
+* It steps a 1 kHz tone from `--start` to `--stop` and measures output
+  level, gain and THD+N at each step.
+* The clip point is where THD+N rises through the threshold (1 % is the
+  usual "maximum level" spec). Extra measurements are made between the two
+  steps either side of it, so it is found to about 0.1 dB.
+* At very low levels THD+N is mostly noise, so readings below the
+  cleanest step never count as clipping.
+* The sweep stops once the soundcard input clips, or 6 dB past the clip
+  point.
+* **Clip limited by** tells you what ran out of headroom first: the
+  *desk*, the *soundcard input* (pad the desk output or lower the interface
+  input gain, then repeat) or the *soundcard output* (with a loopback
+  reference).
+* To compare desks at their analogue clip levels (e.g. "+22 dBu out"),
+  give `--cal-out` and `--cal-in`.
 
 ## Levels and calibration
 

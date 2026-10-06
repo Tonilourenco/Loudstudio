@@ -4,6 +4,7 @@ Examples::
 
     loudstudio gui
     loudstudio devices
+    loudstudio sweep --name "Desk A" --add-to results/desk-a-ch1.json
     loudstudio run --name "Desk A ch1" --out 1 --in 1 --ref-out 2 --ref-in 2
     loudstudio compare results/desk-a-ch1.json results/desk-b-ch1.json
     loudstudio run --name demo --simulate --sim-eq 1000:6:1
@@ -19,7 +20,7 @@ from pathlib import Path
 
 from . import report
 from .audio import Routing, SimulatedBackend, SimulatedDesk, SoundcardBackend, list_devices
-from .measure import Measurer
+from .measure import ALL_MEASUREMENTS, Measurer
 
 
 def _floats(s: str) -> list[float]:
@@ -59,13 +60,15 @@ def _add_common(p: argparse.ArgumentParser) -> None:
     s.add_argument("--sim-latency", type=float, default=1.0, help="simulated desk latency ms")
     s.add_argument("--sim-drive", type=float, default=0.3, help="simulated saturation (0 = linear)")
     s.add_argument("--sim-invert", action="store_true", help="simulate polarity inversion")
+    s.add_argument("--sim-clip", type=float, help="simulated desk output clip level dBFS")
     s.add_argument("--sim-no-ref", action="store_true", help="simulate without loopback reference")
 
 
 def _measurer(a) -> Measurer:
     if a.simulate:
         desk = SimulatedDesk(gain_db=a.sim_gain, eq=a.sim_eq, drive=a.sim_drive,
-                             latency_ms=a.sim_latency, invert=a.sim_invert)
+                             latency_ms=a.sim_latency, invert=a.sim_invert,
+                             clip_dbfs=a.sim_clip)
         backend = SimulatedBackend(a.fs, desk, use_reference=not a.sim_no_ref)
     else:
         if (a.ref_out is None) != (a.ref_in is None):
@@ -95,13 +98,59 @@ def _align_delay(a):
 
 def cmd_run(a):
     m = _measurer(a)
-    res = m.run_all(a.name, thd_freqs=a.thd_freqs, thd_levels=a.thd_levels,
-                    align_delay_samples=_align_delay(a))
+    if a.sweep:
+        _sweep_warning(a)
+    kinds = ALL_MEASUREMENTS + (("sweep",) if a.sweep else ())
+    res = m.run(a.name, kinds, thd_freqs=a.thd_freqs, thd_levels=a.thd_levels,
+                align_delay_samples=_align_delay(a), sweep_args=_sweep_args(a))
     out = Path(a.output or f"results/{_slug(a.name)}.json")
     report.save(res, out)
     report.print_summary(res)
     png = report.plot([res], out.with_suffix(".png"))
     print(f"\nSaved {out} and {png}")
+
+
+def _sweep_args(a) -> dict:
+    return {"start_dbfs": a.start, "stop_dbfs": a.stop, "step_db": a.step,
+            "freq": a.sweep_freq, "threshold_percent": a.threshold}
+
+
+def _add_sweep_options(p):
+    g = p.add_argument_group("level sweep")
+    g.add_argument("--start", type=float, default=-40.0, help="first level dBFS (default -40)")
+    g.add_argument("--stop", type=float, default=0.0, help="last level dBFS (default 0)")
+    g.add_argument("--step", type=float, default=2.0, help="step dB (default 2)")
+    g.add_argument("--sweep-freq", type=float, default=1000.0, help="tone frequency (default 1000)")
+    g.add_argument("--threshold", type=float, default=1.0,
+                   help="THD+N %% that defines the clip point (default 1)")
+
+
+def _sweep_warning(a):
+    if not a.simulate:
+        print(f"WARNING: the level sweep drives the desk into clipping (up to {a.stop:+.0f} dBFS). "
+              "Mute or disconnect speakers and headphones first.")
+
+
+def cmd_sweep(a):
+    _sweep_warning(a)
+    m = _measurer(a)
+    sw = m.level_sweep(progress=lambda msg: print(msg, end="\r", flush=True), **_sweep_args(a))
+    print(" " * 40)
+    print(f"{'in dBFS':>8} {'out dBFS':>9} {'gain dB':>8} {'THD+N %':>9}")
+    for p in sw["points"]:
+        flag = "  <- input clipped" if p["input_clipped"] else ""
+        print(f"{p['input_dbfs']:+8.2f} {p['output_dbfs']:+9.2f} {p['gain_db']:+8.2f} "
+              f"{p['thdn_percent']:9.4f}{flag}")
+    if a.add_to:
+        res = report.load(a.add_to)
+        res["level_sweep"] = sw
+        out = Path(a.add_to)
+    else:
+        res = {"name": a.name, "settings": {"fs": a.fs, "level_dbfs": a.level}, "level_sweep": sw}
+        out = Path(a.output or f"results/{_slug(a.name)}-sweep.json")
+    report.print_summary({"name": res.get("name"), "level_sweep": sw})
+    report.save(res, out)
+    print(f"\nSaved {out} and {report.plot([res], out.with_suffix('.png'))}")
 
 
 def cmd_latency(a):
@@ -159,10 +208,21 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("-o", "--output", help="JSON path (default results/<name>.json)")
     r.add_argument("--thd-freqs", type=_floats, default=[100.0, 1000.0, 10000.0])
     r.add_argument("--thd-levels", type=_floats, help="comma-separated dBFS levels (default --level)")
+    r.add_argument("--sweep", action="store_true",
+                   help="also run the level sweep to find the clip point (drives the desk hard)")
+    _add_sweep_options(r)
     r.add_argument("--align-to", metavar="FLAT.json",
                    help="reuse the latency of a previous (flat/bypassed) result so EQ phase is exact")
     _add_common(r)
     r.set_defaults(func=cmd_run)
+
+    s = sub.add_parser("sweep", help="level sweep to find the clip point (max level)")
+    s.add_argument("--name", default="sweep")
+    s.add_argument("-o", "--output", help="new JSON file (default results/<name>-sweep.json)")
+    s.add_argument("--add-to", metavar="RESULT.json", help="add the sweep to an existing result file")
+    _add_sweep_options(s)
+    _add_common(s)
+    s.set_defaults(func=cmd_sweep)
 
     s = sub.add_parser("latency", help="round-trip latency")
     s.add_argument("--repeats", type=int, default=5)

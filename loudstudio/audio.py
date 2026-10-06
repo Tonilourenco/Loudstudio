@@ -114,6 +114,7 @@ class SimulatedDesk:
     noise_dbfs: float = -100.0
     invert: bool = False
     hpf_hz: float | None = None
+    clip_dbfs: float | None = None  # hard clip of the desk output stage ("rails")
 
     def process(self, x: np.ndarray, fs: int, rng: np.random.Generator) -> np.ndarray:
         y = x * 10 ** (self.gain_db / 20)
@@ -126,6 +127,9 @@ class SimulatedDesk:
         if self.drive > 0:
             # Asymmetric soft clip -> both even and odd harmonics.
             y = (np.tanh(self.drive * (y + 0.05 * y ** 2))) / self.drive
+        if self.clip_dbfs is not None:
+            rail = 10 ** (self.clip_dbfs / 20)
+            y = np.clip(y, -rail, rail)
         if self.invert:
             y = -y
         y = fractional_shift(np.pad(y, (0, 64)), self.latency_ms * fs / 1000)[: len(y)]
@@ -147,7 +151,8 @@ class SimulatedBackend(Backend):
     def _card(self, x):
         d = self.card_latency_ms * self.fs / 1000
         y = fractional_shift(np.pad(x, (0, 64)), d)[: len(x)]
-        return y + self.rng.standard_normal(len(y)) * 10 ** (-115 / 20)
+        y = y + self.rng.standard_normal(len(y)) * 10 ** (-115 / 20)
+        return np.clip(y, -1.0, 1.0)  # converters clip at full scale
 
     def playrec(self, stimulus):
         x = np.asarray(stimulus, dtype=float)

@@ -179,12 +179,160 @@ class Measurer:
             "coherence": np.interp(grid, c.freq, c.coherence).tolist(),
         }
 
+    # -- level sweep / clip point -------------------------------------------
+
+    def level_sweep(self, start_dbfs: float = -40.0, stop_dbfs: float = 0.0,
+                    step_db: float = 2.0, freq: float = 1000.0,
+                    threshold_percent: float = 1.0, duration: float = 0.6,
+                    stop_after_db: float = 6.0, refine: int = 4, progress=None) -> dict:
+        """Step a sine up in level to find where the desk clips.
+
+        At each step: output level, gain, THD and THD+N. The clip point is
+        where THD+N first rises through ``threshold_percent`` (1 % is the
+        usual "maximum level" spec), interpolated between steps. Also
+        reports the 1 dB gain-compression point.
+
+        The sweep stops early once the soundcard input clips, or once it is
+        ``stop_after_db`` past the clip point, to avoid driving the desk
+        hard for no reason.
+        """
+        n = int(duration * self.fs * 0.5)
+        f = sig.coherent_frequency(freq, self.fs, n)
+
+        def measure_at(level: float) -> dict:
+            if progress:
+                progress(f"Level sweep: {level:+.2f} dBFS")
+            _, dut, ref = self._play(sig.sine(f, duration, self.fs, level))
+            seg = self._steady(dut, duration, n)
+            h = an.harmonic_analysis(seg, self.fs, f)
+            p = {
+                "input_dbfs": level,
+                "output_dbfs": h.fundamental_dbfs,
+                "thd_percent": h.thd_percent,
+                "thdn_percent": h.thdn_percent,
+                "input_clipped": bool(np.max(np.abs(seg)) >= 0.999),
+            }
+            if ref is not None:
+                hr = an.harmonic_analysis(self._steady(ref, duration, n), self.fs, f)
+                p["gain_db"] = h.fundamental_dbfs - hr.fundamental_dbfs
+                p["soundcard_thdn_percent"] = hr.thdn_percent
+            else:
+                p["gain_db"] = h.fundamental_dbfs - level + self._cal_offset()
+            return p
+
+        points = []
+        crossed_at = None
+        for level in np.arange(start_dbfs, stop_dbfs + 1e-9, step_db):
+            points.append(measure_at(float(level)))
+            if points[-1]["input_clipped"]:
+                break
+            if crossed_at is None and self._crossing(points, threshold_percent) is not None:
+                crossed_at = level
+            if crossed_at is not None and level >= crossed_at + stop_after_db:
+                break
+
+        # Bisect between the two steps that straddle the threshold, so a hard
+        # clip is located to ~step/2^refine instead of +-step.
+        bracket = self._bracket(points, threshold_percent)
+        if bracket is not None:
+            lo, hi = bracket
+            for _ in range(refine):
+                mid = (lo + hi) / 2
+                p = measure_at(mid)
+                points.append(p)
+                if p["thdn_percent"] >= threshold_percent or p["input_clipped"]:
+                    hi = mid
+                else:
+                    lo = mid
+            points.sort(key=lambda p: p["input_dbfs"])
+
+        res = {"frequency_hz": f, "threshold_percent": threshold_percent,
+               "points": points, **self._clip_summary(points, threshold_percent)}
+        if self.cal_out is not None and res["clip_input_dbfs"] is not None:
+            res["clip_input_dbu"] = res["clip_input_dbfs"] + self.cal_out
+        if self.cal_in is not None and res["clip_output_dbfs"] is not None:
+            res["clip_output_dbu"] = res["clip_output_dbfs"] + self.cal_in
+        return res
+
+    @staticmethod
+    def _first_over(points: list[dict], thr: float) -> int | None:
+        """Index of the first step whose THD+N reaches ``thr``.
+
+        Only looks above the THD+N minimum: at low levels THD+N is dominated
+        by noise and can exceed the threshold without anything clipping.
+        """
+        thdn = np.array([p["thdn_percent"] for p in points])
+        i_min = int(np.argmin(thdn))
+        for i in range(i_min + 1, len(points)):
+            if thdn[i] >= thr:
+                return i
+        return None
+
+    @classmethod
+    def _bracket(cls, points, thr) -> tuple[float, float] | None:
+        i = cls._first_over(points, thr)
+        if i is None:
+            return None
+        return points[i - 1]["input_dbfs"], points[i]["input_dbfs"]
+
+    @classmethod
+    def _crossing(cls, points: list[dict], thr: float) -> float | None:
+        """Interpolated input level where THD+N rises through ``thr``."""
+        i = cls._first_over(points, thr)
+        if i is None:
+            return None
+        a, b = np.log10(points[i - 1]["thdn_percent"]), np.log10(points[i]["thdn_percent"])
+        t = (np.log10(thr) - a) / (b - a) if b != a else 1.0
+        x0, x1 = points[i - 1]["input_dbfs"], points[i]["input_dbfs"]
+        return float(x0 + np.clip(t, 0, 1) * (x1 - x0))
+
+    def _clip_summary(self, points: list[dict], thr: float) -> dict:
+        x = np.array([p["input_dbfs"] for p in points])
+        out = np.array([p["output_dbfs"] for p in points])
+        gain = np.array([p["gain_db"] for p in points])
+        clip_in = self._crossing(points, thr)
+
+        # 1 dB compression, relative to the gain at the cleanest step.
+        thdn = np.array([p["thdn_percent"] for p in points])
+        g_ref = gain[int(np.argmin(thdn))]
+        comp = None
+        for i in range(1, len(points)):
+            if g_ref - gain[i] >= 1.0 and g_ref - gain[i - 1] < 1.0:
+                t = (g_ref - gain[i - 1] - 1.0) / (gain[i - 1] - gain[i])
+                comp = float(x[i - 1] + t * (x[i] - x[i - 1]))
+                break
+
+        if clip_in is None:
+            limited_by = "input clipped" if points[-1]["input_clipped"] else "not reached"
+            clip_out = None
+        else:
+            clip_out = float(np.interp(clip_in, x, out))
+            i = int(np.searchsorted(x, clip_in))
+            p = points[min(i, len(points) - 1)]
+            if p["input_clipped"] or clip_out > -0.5:
+                limited_by = "soundcard input"
+            elif p.get("soundcard_thdn_percent", 0) >= thr:
+                limited_by = "soundcard output"
+            else:
+                limited_by = "desk"
+        return {
+            "clip_input_dbfs": clip_in,
+            "clip_output_dbfs": clip_out,
+            "compression_1db_input_dbfs": comp,
+            "max_clean_output_dbfs": float(max(
+                (p["output_dbfs"] for p in points if p["thdn_percent"] < thr), default=np.nan)),
+            "limited_by": limited_by,
+            "max_tested_dbfs": float(x[-1]),
+        }
+
     # -- everything --------------------------------------------------------
 
     def run(self, name: str, kinds=ALL_MEASUREMENTS,
             thd_freqs=(100.0, 1000.0, 10000.0), thd_levels=None,
-            align_delay_samples: float | None = None, progress=print) -> dict:
-        """Run the selected measurements (any of ``ALL_MEASUREMENTS``)."""
+            align_delay_samples: float | None = None, sweep_args: dict | None = None,
+            progress=print) -> dict:
+        """Run the selected measurements (any of ``ALL_MEASUREMENTS`` plus
+        ``"sweep"``, which is opt-in because it drives the desk into clipping)."""
         res = {
             "name": name,
             "timestamp": _dt.datetime.now().isoformat(timespec="seconds"),
@@ -211,6 +359,9 @@ class Measurer:
         if "correlation" in kinds:
             progress("Measuring correlation & coherence...")
             res["correlation"] = self.correlation()
+        if "sweep" in kinds:
+            progress("Level sweep...")
+            res["level_sweep"] = self.level_sweep(progress=progress, **(sweep_args or {}))
         return res
 
     def run_all(self, name: str, **kwargs) -> dict:

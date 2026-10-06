@@ -52,6 +52,22 @@ def summary_rows(r: dict) -> list[tuple[str, str]]:
     if c:
         rows.append(("Correlation (in vs out)", f"{c['correlation']:+.4f} ({c['polarity']})"))
         rows.append(("Mean coherence 100 Hz-10 kHz", _fmt(c.get("mean_coherence_100_10k"), ".4f")))
+    sw = r.get("level_sweep")
+    if sw:
+        thr = f"THD+N {sw['threshold_percent']:g}%"
+        if sw["clip_input_dbfs"] is None:
+            rows.append((f"Clip point ({thr})",
+                         f"not reached up to {sw['max_tested_dbfs']:+.1f} dBFS in"
+                         + (" (input clipped)" if sw["limited_by"] == "input clipped" else "")))
+        else:
+            dbu_in = f" ({sw['clip_input_dbu']:+.1f} dBu)" if "clip_input_dbu" in sw else ""
+            dbu_out = f" ({sw['clip_output_dbu']:+.1f} dBu)" if "clip_output_dbu" in sw else ""
+            rows.append((f"Clip point in ({thr})", f"{sw['clip_input_dbfs']:+.1f} dBFS{dbu_in}"))
+            rows.append((f"Clip point out ({thr})", f"{sw['clip_output_dbfs']:+.1f} dBFS{dbu_out}"))
+            hint = {"soundcard input": " - pad the desk output or lower the interface input gain",
+                    "soundcard output": " - the interface output distorts first"}
+            rows.append(("Clip limited by", sw["limited_by"] + hint.get(sw["limited_by"], "")))
+        rows.append(("1 dB compression (input)", _fmt(sw.get("compression_1db_input_dbfs"), "+.1f", " dBFS")))
     return rows
 
 
@@ -93,7 +109,7 @@ def plot(results: list[dict], path: str | Path, relative_to_first: bool = False)
     """Save the result plot (see :func:`draw`) as an image."""
     from matplotlib.figure import Figure  # no pyplot: safe alongside the GUI
 
-    fig = Figure(figsize=(14, 12))
+    fig = Figure(figsize=(14, 16))
     draw(fig, results, relative_to_first, summary=True)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -103,7 +119,8 @@ def plot(results: list[dict], path: str | Path, relative_to_first: bool = False)
 
 def draw(fig, results: list[dict], relative_to_first: bool = False,
          summary: bool = True) -> None:
-    """Draw magnitude, phase, group delay, coherence and THD spectrum on ``fig``.
+    """Draw magnitude, phase, group delay, coherence, THD spectrum and (if
+    measured) the level sweep on ``fig``.
 
     With several results the curves are overlaid; ``relative_to_first``
     plots magnitude/phase as differences to the first result instead.
@@ -112,11 +129,14 @@ def draw(fig, results: list[dict], relative_to_first: bool = False,
     fig.clear()
     if not results:
         return
-    gs = fig.add_gridspec(3, 2)
+    has_sweep = any("level_sweep" in r for r in results)
+    gs = fig.add_gridspec(4 if summary else 3, 2,
+                          height_ratios=[1, 1, 1, 1.1] if summary else None)
     ax_mag, ax_ph = fig.add_subplot(gs[0, 0]), fig.add_subplot(gs[0, 1])
     ax_gd, ax_coh = fig.add_subplot(gs[1, 0]), fig.add_subplot(gs[1, 1])
-    # Without the summary panel the spectrum gets the whole bottom row.
-    ax_thd = fig.add_subplot(gs[2, 0] if summary else gs[2, :])
+    # The spectrum shares the bottom row with the level sweep if there is one.
+    ax_thd = fig.add_subplot(gs[2, 0] if has_sweep else gs[2, :])
+    ax_sw = fig.add_subplot(gs[2, 1]) if has_sweep else None
     base = results[0].get("response") if relative_to_first else None
 
     for r in results:
@@ -138,6 +158,15 @@ def draw(fig, results: list[dict], relative_to_first: bool = False,
         s = r.get("thd_spectrum")
         if s:
             ax_thd.semilogx(s["freq"], s["dbfs"], lw=0.7, label=name)
+        sw = r.get("level_sweep")
+        if sw:
+            x = [p["input_dbfs"] for p in sw["points"]]
+            y = [p["thdn_percent"] for p in sw["points"]]
+            (line,) = ax_sw.semilogy(x, y, ".-", label=name)
+            if sw["clip_input_dbfs"] is not None:
+                ax_sw.axvline(sw["clip_input_dbfs"], color=line.get_color(), ls=":", lw=1)
+                ax_sw.plot([sw["clip_input_dbfs"]], [sw["threshold_percent"]], "o",
+                           color=line.get_color(), ms=8, mfc="none")
 
     suffix = " (relative to first)" if base is not None else ""
     _log_axis(ax_mag, "Magnitude (dB)" + suffix)
@@ -153,17 +182,26 @@ def draw(fig, results: list[dict], relative_to_first: bool = False,
     ax_thd.set_ylim(-160, 10)
     ax_thd.set_title("Distortion spectrum (tone nearest 1 kHz)")
     ax_thd.set_xlabel("Frequency (Hz)")
-    for ax in (ax_mag, ax_ph, ax_gd, ax_coh, ax_thd):
-        if ax.get_legend_handles_labels()[0]:
+    if ax_sw is not None:
+        thr = next(r["level_sweep"]["threshold_percent"] for r in results if "level_sweep" in r)
+        ax_sw.axhline(thr, color="0.4", ls="--", lw=1)
+        ax_sw.set_title(f"Level sweep - clip point at THD+N {thr:g}% (circles)")
+        ax_sw.set_xlabel("Input level (dBFS)")
+        ax_sw.set_ylabel("THD+N (%)")
+        ax_sw.grid(True, which="both", alpha=0.3)
+    for ax in (ax_mag, ax_ph, ax_gd, ax_coh, ax_thd, ax_sw):
+        if ax is not None and ax.get_legend_handles_labels()[0]:
             ax.legend(fontsize=8)
 
     if summary:
-        ax_txt = fig.add_subplot(gs[2, 1])
-        ax_txt.axis("off")
-        lines = []
-        for r in results:
-            lines.append(r.get("name", "?"))
-            lines += [f"  {k}: {v}" for k, v in summary_rows(r)]
-            lines.append("")
-        ax_txt.text(0, 1, "\n".join(lines), va="top", family="monospace", fontsize=7)
+        # Results alternate between the two text columns.
+        for col in range(2):
+            ax_txt = fig.add_subplot(gs[3, col])
+            ax_txt.axis("off")
+            lines = []
+            for r in results[col::2]:
+                lines.append(r.get("name", "?"))
+                lines += [f"  {k}: {v}" for k, v in summary_rows(r)]
+                lines.append("")
+            ax_txt.text(0, 1, "\n".join(lines), va="top", family="monospace", fontsize=7)
     fig.tight_layout()

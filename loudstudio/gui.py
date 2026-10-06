@@ -118,12 +118,14 @@ class App(ttk.Frame):
         self.sim_gain, self.sim_lat = tk.StringVar(value="0"), tk.StringVar(value="1.0")
         self.sim_eq, self.sim_drive = tk.StringVar(value=""), tk.StringVar(value="0.3")
         self.sim_invert = tk.BooleanVar(value=False)
+        self.sim_clip = tk.StringVar(value="")
         self._row(sim, 2, "Gain (dB)", ttk.Entry(sim, textvariable=self.sim_gain, width=8))
         self._row(sim, 3, "EQ  f:gain:Q, ...", ttk.Entry(sim, textvariable=self.sim_eq, width=16))
         self._row(sim, 4, "Latency (ms)", ttk.Entry(sim, textvariable=self.sim_lat, width=8))
         self._row(sim, 5, "Saturation", ttk.Entry(sim, textvariable=self.sim_drive, width=8))
+        self._row(sim, 6, "Output clip (dBFS)", ttk.Entry(sim, textvariable=self.sim_clip, width=8))
         ttk.Checkbutton(sim, text="Invert polarity", variable=self.sim_invert).grid(
-            row=6, column=0, columnspan=2, sticky="w")
+            row=7, column=0, columnspan=2, sticky="w")
 
         # -- measurement ---------------------------------------------------
         m = ttk.LabelFrame(parent, text="Measurement", padding=6)
@@ -141,8 +143,18 @@ class App(ttk.Frame):
         ttk.Label(m, text="Pick a flat (EQ bypassed) result of the same\ndesk to measure EQ phase shift exactly.",
                   foreground="#666").grid(row=4, column=0, columnspan=2, sticky="w")
 
+        sw = ttk.Frame(m)
+        sw.grid(row=5, column=0, columnspan=2, sticky="w", pady=(4, 0))
+        self.sw_start, self.sw_stop = tk.StringVar(value="-40"), tk.StringVar(value="0")
+        self.sw_step, self.sw_thr = tk.StringVar(value="2"), tk.StringVar(value="1")
+        for col, (label, var) in enumerate((("Sweep from", self.sw_start), ("to", self.sw_stop),
+                                            ("step", self.sw_step), ("clip at THD+N %", self.sw_thr))):
+            ttk.Label(sw, text=label).grid(row=col // 2, column=(col % 2) * 2, sticky="w", padx=(0, 4))
+            ttk.Entry(sw, textvariable=var, width=6).grid(row=col // 2, column=(col % 2) * 2 + 1,
+                                                          sticky="w", padx=(0, 8))
+
         btns = ttk.Frame(m)
-        btns.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(6, 0))
+        btns.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(6, 0))
         self.run_buttons = []
         b = ttk.Button(btns, text="Run all measurements", command=lambda: self._start(ALL_MEASUREMENTS))
         b.grid(row=0, column=0, columnspan=3, sticky="ew", pady=(0, 4))
@@ -152,6 +164,9 @@ class App(ttk.Frame):
             b = ttk.Button(btns, text=label, command=lambda k=kind: self._start((k,)))
             b.grid(row=1 + i // 3, column=i % 3, sticky="ew", padx=1, pady=1)
             self.run_buttons.append(b)
+        b = ttk.Button(btns, text="Clip sweep", command=lambda: self._start(("sweep",)))
+        b.grid(row=2, column=2, sticky="ew", padx=1, pady=1)
+        self.run_buttons.append(b)
         for c in range(3):
             btns.columnconfigure(c, weight=1)
 
@@ -219,7 +234,8 @@ class App(ttk.Frame):
             desk = SimulatedDesk(gain_db=float(self.sim_gain.get()), eq=eq,
                                  drive=float(self.sim_drive.get()),
                                  latency_ms=float(self.sim_lat.get()),
-                                 invert=self.sim_invert.get())
+                                 invert=self.sim_invert.get(),
+                                 clip_dbfs=_opt_float(self.sim_clip.get()))
             backend = SimulatedBackend(fs, desk, use_reference=self.use_ref.get())
         else:
             if not self.device.get():
@@ -250,12 +266,21 @@ class App(ttk.Frame):
             m = self._measurer()
             kwargs = {
                 "kinds": kinds,
+                "sweep_args": {
+                    "start_dbfs": float(self.sw_start.get()), "stop_dbfs": float(self.sw_stop.get()),
+                    "step_db": float(self.sw_step.get()), "threshold_percent": float(self.sw_thr.get()),
+                },
                 "thd_freqs": _floats(self.thd_freqs.get()) or [1000.0],
                 "thd_levels": _floats(self.thd_levels.get()) or None,
                 "align_delay_samples": self._align_delay() if "response" in kinds else None,
             }
         except (ValueError, RuntimeError) as exc:
             messagebox.showerror("Loudstudio", str(exc))
+            return
+        if "sweep" in kinds and not self.simulate.get() and not messagebox.askokcancel(
+                "Clip sweep",
+                f"The sweep plays a 1 kHz tone up to {self.sw_stop.get()} dBFS and drives the desk "
+                "into clipping.\n\nMute or disconnect any speakers and headphones on the desk first."):
             return
         name = self.name.get().strip() or "measurement"
         self._set_busy(True)
