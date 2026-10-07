@@ -1,6 +1,6 @@
 """Simple Tkinter GUI: set up routing, run measurements, compare results.
 
-Start with ``loudstudio-gui`` or ``loudstudio gui``.
+Start with ``deskcheck-gui`` or ``deskcheck gui``.
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ class App(ttk.Frame):
         self.queue: queue.Queue = queue.Queue()
         self.busy = False
 
-        master.title("Loudstudio - desk analyser")
+        master.title("Desk Check")
         master.geometry("1440x940")
         self.pack(fill="both", expand=True)
 
@@ -275,7 +275,7 @@ class App(ttk.Frame):
                 "align_delay_samples": self._align_delay() if "response" in kinds else None,
             }
         except (ValueError, RuntimeError) as exc:
-            messagebox.showerror("Loudstudio", str(exc))
+            messagebox.showerror("Desk Check", str(exc))
             return
         if "sweep" in kinds and not self.simulate.get() and not messagebox.askokcancel(
                 "Clip sweep",
@@ -303,7 +303,7 @@ class App(ttk.Frame):
                 elif kind == "error":
                     self._set_busy(False)
                     self.status.set("Error: " + payload)
-                    messagebox.showerror("Loudstudio", payload)
+                    messagebox.showerror("Desk Check", payload)
                 elif kind == "done":
                     self._set_busy(False)
                     self._add_result(payload, merge=True)
@@ -381,7 +381,7 @@ class App(ttk.Frame):
             try:
                 res = report.load(p)
             except (OSError, ValueError) as exc:
-                messagebox.showerror("Loudstudio", f"{p}: {exc}")
+                messagebox.showerror("Desk Check", f"{p}: {exc}")
                 continue
             self.paths[id(res)] = Path(p)
             self._add_result(res)

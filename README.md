@@ -1,4 +1,4 @@
-# Loudstudio
+# Desk Check
 
 A small analyser for measuring and comparing mixing desks (analogue or
 digital) with an ordinary multi-channel soundcard.
@@ -20,23 +20,21 @@ overlaid in a comparison table and plot.
 ## Install
 
 ```bash
-# PortAudio is needed for soundcard access
-#   macOS:  brew install portaudio
-#   Debian/Ubuntu: sudo apt install libportaudio2
-#   Windows: included with the sounddevice wheel
+# PortAudio (soundcard access) is bundled on macOS and Windows.
+#   Debian/Ubuntu only: sudo apt install libportaudio2 python3-tk
 pip install -e .
 ```
 
 You can try everything without hardware by adding `--simulate`:
 
 ```bash
-loudstudio run --name "demo" --simulate --sim-eq 1000:6:1.4 --sim-latency 2.5
+deskcheck run --name "demo" --simulate --sim-eq 1000:6:1.4 --sim-latency 2.5
 ```
 
 ## GUI
 
 ```bash
-loudstudio gui        # or: loudstudio-gui
+deskcheck gui        # or: deskcheck-gui
 ```
 
 The settings column on the left holds the soundcard device, channel routing,
@@ -69,7 +67,7 @@ ships with Python on Windows and macOS. On Linux, install `python3-tk`.
 The **loopback reference** (OUT 2 → IN 2) records the same stimulus through
 the soundcard only. Every measurement is then made *relative* to it, so the
 soundcard's own latency, converter levels and frequency response cancel out,
-and you measure only the desk. Tell Loudstudio about it with
+and you measure only the desk. Tell Desk Check about it with
 `--ref-out 2 --ref-in 2`.
 
 With digital desks you can also connect over MADI/Dante/USB. Pick the
@@ -78,7 +76,7 @@ matching device with `--device`, and the channels with `--out` and `--in`.
 Find device names and channel counts with:
 
 ```bash
-loudstudio devices
+deskcheck devices
 ```
 
 ## Typical workflow
@@ -87,30 +85,30 @@ loudstudio devices
 COMMON="--device 'Fireface' --out 1 --in 1 --ref-out 2 --ref-in 2 --level -18"
 
 # 1. Desk A, channel flat (EQ bypassed, fader & trim at a known setting)
-loudstudio run --name "Desk A flat" $COMMON
+deskcheck run --name "Desk A flat" $COMMON
 
 # 2. Desk A with an EQ setting, phase measured against the flat latency
-loudstudio run --name "Desk A EQ 3k -6dB Q2" $COMMON --align-to results/desk-a-flat.json
+deskcheck run --name "Desk A EQ 3k -6dB Q2" $COMMON --align-to results/desk-a-flat.json
 
 # 3. Same for desk B ...
-loudstudio run --name "Desk B flat" $COMMON
-loudstudio run --name "Desk B EQ 3k -6dB Q2" $COMMON --align-to results/desk-b-flat.json
+deskcheck run --name "Desk B flat" $COMMON
+deskcheck run --name "Desk B EQ 3k -6dB Q2" $COMMON --align-to results/desk-b-flat.json
 
 # 4. Compare (table in the terminal + results/compare.png)
-loudstudio compare results/desk-a-flat.json results/desk-b-flat.json
-loudstudio compare results/desk-a-eq-3k-6db-q2.json results/desk-b-eq-3k-6db-q2.json -o results/eq.png
+deskcheck compare results/desk-a-flat.json results/desk-b-flat.json
+deskcheck compare results/desk-a-eq-3k-6db-q2.json results/desk-b-eq-3k-6db-q2.json -o results/eq.png
 
 # Differences relative to the first file (e.g. how EQ changed the response)
-loudstudio compare results/desk-a-flat.json results/desk-a-eq-3k-6db-q2.json --relative -o results/a-eq-delta.png
+deskcheck compare results/desk-a-flat.json results/desk-a-eq-3k-6db-q2.json --relative -o results/a-eq-delta.png
 ```
 
 Single measurements are also available: `latency`, `gain`, `thd`,
-`response` and `correlation`. Run `loudstudio <command> -h` for the options
+`response` and `correlation`. Run `deskcheck <command> -h` for the options
 of each, for example:
 
 ```bash
-loudstudio latency $COMMON --repeats 10
-loudstudio thd $COMMON --freqs 100,1000,10000 --levels=-30,-18,-6,0
+deskcheck latency $COMMON --repeats 10
+deskcheck thd $COMMON --freqs 100,1000,10000 --levels=-30,-18,-6,0
 ```
 
 Note: negative lists need `=`, as in `--levels=-30,-18`.
@@ -119,9 +117,9 @@ Note: negative lists need `=`, as in `--levels=-30,-18`.
 
 ```bash
 # add a level sweep to an existing result
-loudstudio sweep $COMMON --add-to results/desk-a-flat.json
+deskcheck sweep $COMMON --add-to results/desk-a-flat.json
 # or include it in a full run
-loudstudio run --name "Desk A flat" $COMMON --sweep
+deskcheck run --name "Desk A flat" $COMMON --sweep
 # options: --start -40 --stop 0 --step 2 --sweep-freq 1000 --threshold 1
 ```
 

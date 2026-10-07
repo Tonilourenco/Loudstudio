@@ -2,10 +2,10 @@ import numpy as np
 import pytest
 from scipy import signal as sps
 
-from loudstudio import analysis as an
-from loudstudio import signals as sig
-from loudstudio.audio import SimulatedBackend, SimulatedDesk, peaking_eq
-from loudstudio.measure import Measurer
+from deskcheck import analysis as an
+from deskcheck import signals as sig
+from deskcheck.audio import SimulatedBackend, SimulatedDesk, peaking_eq
+from deskcheck.measure import Measurer
 
 FS = 48000
 

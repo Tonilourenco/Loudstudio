@@ -2,12 +2,12 @@
 
 Examples::
 
-    loudstudio gui
-    loudstudio devices
-    loudstudio sweep --name "Desk A" --add-to results/desk-a-ch1.json
-    loudstudio run --name "Desk A ch1" --out 1 --in 1 --ref-out 2 --ref-in 2
-    loudstudio compare results/desk-a-ch1.json results/desk-b-ch1.json
-    loudstudio run --name demo --simulate --sim-eq 1000:6:1
+    deskcheck gui
+    deskcheck devices
+    deskcheck sweep --name "Desk A" --add-to results/desk-a-ch1.json
+    deskcheck run --name "Desk A ch1" --out 1 --in 1 --ref-out 2 --ref-in 2
+    deskcheck compare results/desk-a-ch1.json results/desk-b-ch1.json
+    deskcheck run --name demo --simulate --sim-eq 1000:6:1
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ def _slug(name: str) -> str:
 
 def _add_common(p: argparse.ArgumentParser) -> None:
     g = p.add_argument_group("soundcard")
-    g.add_argument("--device", type=_device, help="device index or name (see `loudstudio devices`)")
+    g.add_argument("--device", type=_device, help="device index or name (see `deskcheck devices`)")
     g.add_argument("--fs", type=int, default=48000, help="sample rate (default 48000)")
     g.add_argument("--out", dest="dut_out", type=int, default=1, help="output channel to desk input (1-based)")
     g.add_argument("--in", dest="dut_in", type=int, default=1, help="input channel from desk output (1-based)")
@@ -197,7 +197,7 @@ def cmd_gui(a):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="loudstudio", description=__doc__,
+    p = argparse.ArgumentParser(prog="deskcheck", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
 

@@ -50,8 +50,8 @@ def _import_sounddevice():
         import sounddevice as sd
     except OSError as exc:  # PortAudio shared library missing
         raise RuntimeError(
-            "PortAudio library not found. Install it (macOS: `brew install portaudio`, "
-            "Debian/Ubuntu: `sudo apt install libportaudio2`) or use --simulate."
+            "PortAudio library not found. Reinstall the sounddevice package (macOS/Windows), "
+            "or on Debian/Ubuntu run `sudo apt install libportaudio2`, or use --simulate."
         ) from exc
     return sd
 
