@@ -2,6 +2,7 @@
 
 import math
 import sys
+from pathlib import Path
 
 from PIL import Image, ImageDraw
 
@@ -32,6 +33,7 @@ def main(path: str) -> None:
         y = (250 - 70 * math.exp(-((x - 420) / 75) ** 2)
              + 45 * math.exp(-((x - 640) / 55) ** 2))
         d.ellipse(box(x - r, y - r, x + r, y + r), fill=(255, 170, 40, 255))
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
     img.resize((1024, 1024), Image.LANCZOS).save(path)
 
 
