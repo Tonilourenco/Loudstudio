@@ -17,7 +17,34 @@ It measures:
 Every run is saved as JSON plus a PNG plot, and any number of runs can be
 overlaid in a comparison table and plot.
 
-## Install
+## Mac app
+
+A ready-made **Desk Check.app** is built automatically on GitHub every time
+the code changes. Find it on the repository's **Releases** page under
+**Desk Check for Mac**:
+
+1. Choose the file for your Mac. Check Apple menu → About This Mac: if
+   "Chip" says Apple M…, use `Desk-Check-Mac-apple-silicon.zip`. If it says
+   Intel, use `Desk-Check-Mac-intel.zip`.
+2. Open the zip and drag **Desk Check** into **Applications**.
+3. The first time, macOS blocks it because it isn't from a registered
+   Apple developer. Double-click it and click **Done**. Then open
+   **System Settings → Privacy & Security**, scroll down, click
+   **Open Anyway** next to Desk Check, and confirm.
+4. Allow **microphone** access when asked. That is how Desk Check records
+   your audio interface's inputs. If you declined, switch it on under
+   System Settings → Privacy & Security → Microphone.
+
+The build is defined in `.github/workflows/mac-app.yml` and
+`packaging/desk_check.spec`. To build the app yourself on a Mac:
+
+```bash
+pip install . pyinstaller
+python packaging/make_icon.py packaging/build/icon.png
+pyinstaller --noconfirm packaging/desk_check.spec   # -> dist/Desk Check.app
+```
+
+## Install from source
 
 ```bash
 # PortAudio (soundcard access) is bundled on macOS and Windows.
