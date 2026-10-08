@@ -33,6 +33,23 @@ jobs:
       - name: Install Pillow
         run: pip install pillow
 
+      # loudstudio.com may not resolve while the domain moves to Hostinger.
+      # Show what DNS says, and if the domain has no address, reach the site
+      # through the Hostinger CDN host that its DNS zone points at.
+      - name: Check DNS
+        run: |
+          for q in "NS loudstudio.com" "A loudstudio.com" "AAAA loudstudio.com" "A www.loudstudio.com" "A loudstudio.com.cdn.hstgr.net"; do
+            echo "== dig $q"; dig +short $q || true
+          done
+          echo "== whois name servers"; whois loudstudio.com 2>/dev/null | grep -i -E "name server|nserver|status" | head -10 || true
+          if [ -z "$(dig +short A loudstudio.com)" ]; then
+            ip=$(dig +short A loudstudio.com.cdn.hstgr.net | grep -E '^[0-9.]+$' | head -1)
+            if [ -n "$ip" ]; then
+              echo "loudstudio.com has no address; using Hostinger CDN $ip"
+              echo "$ip loudstudio.com" | sudo tee -a /etc/hosts
+            fi
+          fi
+
       - name: Download and resize
         run: python website/tools/fetch_assets.py
 
