@@ -5,3 +5,6 @@ results/
 build/
 dist/
 .venv/
+
+# Website asset downloads
+website/tools/.cache/

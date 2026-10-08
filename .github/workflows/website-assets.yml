@@ -1,0 +1,53 @@
+name: Website assets
+
+# Downloads the photos, logos and the Li.LAC PDF from the old WordPress site,
+# makes web-sized copies (website/tools/fetch_assets.py) and commits them to
+# the same branch. Runs when the asset list or the script changes, or by hand.
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "website/tools/assets.json"
+      - "website/tools/fetch_assets.py"
+      - ".github/workflows/website-assets.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: website-assets-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Pillow
+        run: pip install pillow
+
+      - name: Download and resize
+        run: python website/tools/fetch_assets.py
+
+      - name: Commit the files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add website/public website/tools/assets-report.json
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "Website: add images and PDF from the old site"
+          for i in 1 2 3; do
+            git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep 5
+          done
+          exit 1
