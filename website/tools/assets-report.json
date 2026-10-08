@@ -1,0 +1,420 @@
+{
+  "sources": {
+    "loudstudio.png": {
+      "width": 1600,
+      "height": 1166,
+      "mode": "RGBA",
+      "colours": [
+        {
+          "hex": "#00aeef",
+          "share": 0.734
+        },
+        {
+          "hex": "#00b2f4",
+          "share": 0.169
+        },
+        {
+          "hex": "#00aef0",
+          "share": 0.093
+        },
+        {
+          "hex": "#00adef",
+          "share": 0.002
+        },
+        {
+          "hex": "#00aeee",
+          "share": 0.001
+        },
+        {
+          "hex": "#65cff7",
+          "share": 0.001
+        }
+      ]
+    },
+    "loudstudio-proaudio.png": {
+      "width": 1600,
+      "height": 1210,
+      "mode": "RGBA",
+      "colours": [
+        {
+          "hex": "#867650",
+          "share": 0.76
+        },
+        {
+          "hex": "#897952",
+          "share": 0.155
+        },
+        {
+          "hex": "#877650",
+          "share": 0.072
+        },
+        {
+          "hex": "#86754f",
+          "share": 0.007
+        },
+        {
+          "hex": "#86764f",
+          "share": 0.004
+        },
+        {
+          "hex": "#857650",
+          "share": 0.002
+        }
+      ]
+    },
+    "li-lac-logo-white.png": {
+      "width": 768,
+      "height": 379,
+      "mode": "RGBA",
+      "colours": []
+    },
+    "li-lac-gaveta-topo-min.png": {
+      "width": 1600,
+      "height": 1663,
+      "mode": "RGBA",
+      "colours": [
+        {
+          "hex": "#3a5168",
+          "share": 0.275
+        },
+        {
+          "hex": "#6e9bcc",
+          "share": 0.221
+        },
+        {
+          "hex": "#3b536a",
+          "share": 0.189
+        },
+        {
+          "hex": "#84b2e0",
+          "share": 0.116
+        },
+        {
+          "hex": "#384066",
+          "share": 0.109
+        },
+        {
+          "hex": "#527498",
+          "share": 0.089
+        }
+      ]
+    },
+    "lilac-perfil-gaveta.png": {
+      "width": 1600,
+      "height": 1066,
+      "mode": "RGBA",
+      "colours": [
+        {
+          "hex": "#557590",
+          "share": 0.232
+        },
+        {
+          "hex": "#516883",
+          "share": 0.182
+        },
+        {
+          "hex": "#445f76",
+          "share": 0.176
+        },
+        {
+          "hex": "#38426b",
+          "share": 0.156
+        },
+        {
+          "hex": "#6790ac",
+          "share": 0.145
+        },
+        {
+          "hex": "#9fcce7",
+          "share": 0.109
+        }
+      ]
+    },
+    "lilac-front-2.png": {
+      "width": 1600,
+      "height": 1067,
+      "mode": "RGBA",
+      "colours": [
+        {
+          "hex": "#5c3787",
+          "share": 0.241
+        },
+        {
+          "hex": "#c37cf7",
+          "share": 0.203
+        },
+        {
+          "hex": "#c696f9",
+          "share": 0.156
+        },
+        {
+          "hex": "#a961ef",
+          "share": 0.148
+        },
+        {
+          "hex": "#9f53eb",
+          "share": 0.127
+        },
+        {
+          "hex": "#d9b9fe",
+          "share": 0.127
+        }
+      ]
+    },
+    "LiLAC_PT2_v2_20211001-pdf.jpg": {
+      "width": 1058,
+      "height": 1497,
+      "mode": "RGB",
+      "colours": [
+        {
+          "hex": "#9a05b7",
+          "share": 0.755
+        },
+        {
+          "hex": "#9034a5",
+          "share": 0.115
+        },
+        {
+          "hex": "#9b05b8",
+          "share": 0.066
+        },
+        {
+          "hex": "#9a05b6",
+          "share": 0.026
+        },
+        {
+          "hex": "#9805b6",
+          "share": 0.025
+        },
+        {
+          "hex": "#9a03b7",
+          "share": 0.013
+        }
+      ]
+    },
+    "toni.jpg": {
+      "width": 1600,
+      "height": 1608,
+      "mode": "RGB",
+      "colours": []
+    },
+    "leo-wieling-Sby_GQz1-5E-unsplash.jpg": {
+      "width": 1600,
+      "height": 1067,
+      "mode": "RGB",
+      "colours": []
+    },
+    "blaz-photo-cZWZjymwI9o-unsplash.jpg": {
+      "width": 1600,
+      "height": 1068,
+      "mode": "RGB",
+      "colours": []
+    },
+    "favicon-loudstudio.png": {
+      "width": 600,
+      "height": 600,
+      "mode": "RGBA",
+      "colours": [
+        {
+          "hex": "#009fe3",
+          "share": 0.842
+        },
+        {
+          "hex": "#00a4ea",
+          "share": 0.056
+        },
+        {
+          "hex": "#00a0e5",
+          "share": 0.051
+        },
+        {
+          "hex": "#009bde",
+          "share": 0.032
+        },
+        {
+          "hex": "#009fe2",
+          "share": 0.013
+        },
+        {
+          "hex": "#009fe4",
+          "share": 0.006
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "assets/img/brand/loudstudio-480.png": {
+      "width": 480,
+      "height": 350,
+      "bytes": 54156
+    },
+    "assets/img/brand/loudstudio-480.webp": {
+      "width": 480,
+      "height": 350,
+      "bytes": 29264
+    },
+    "assets/img/brand/loudstudio-960.png": {
+      "width": 960,
+      "height": 700,
+      "bytes": 121505
+    },
+    "assets/img/brand/loudstudio-960.webp": {
+      "width": 960,
+      "height": 700,
+      "bytes": 62694
+    },
+    "assets/img/brand/loudstudio-proaudio-480.png": {
+      "width": 480,
+      "height": 363,
+      "bytes": 56243
+    },
+    "assets/img/brand/loudstudio-proaudio-480.webp": {
+      "width": 480,
+      "height": 363,
+      "bytes": 26780
+    },
+    "assets/img/brand/loudstudio-proaudio-960.png": {
+      "width": 960,
+      "height": 726,
+      "bytes": 123418
+    },
+    "assets/img/brand/loudstudio-proaudio-960.webp": {
+      "width": 960,
+      "height": 726,
+      "bytes": 55556
+    },
+    "assets/img/brand/lilac-logo-white-384.png": {
+      "width": 384,
+      "height": 190,
+      "bytes": 29725
+    },
+    "assets/img/brand/lilac-logo-white-384.webp": {
+      "width": 384,
+      "height": 190,
+      "bytes": 14844
+    },
+    "assets/img/brand/lilac-logo-white-768.png": {
+      "width": 768,
+      "height": 379,
+      "bytes": 49080
+    },
+    "assets/img/brand/lilac-logo-white-768.webp": {
+      "width": 768,
+      "height": 379,
+      "bytes": 25476
+    },
+    "assets/img/lilac/gaveta-topo-640.webp": {
+      "width": 640,
+      "height": 665,
+      "bytes": 48310
+    },
+    "assets/img/lilac/gaveta-topo-1200.webp": {
+      "width": 1200,
+      "height": 1247,
+      "bytes": 115380
+    },
+    "assets/img/lilac/gaveta-topo-2000.webp": {
+      "width": 1600,
+      "height": 1663,
+      "bytes": 143312
+    },
+    "assets/img/lilac/gaveta-perfil-640.webp": {
+      "width": 640,
+      "height": 426,
+      "bytes": 24040
+    },
+    "assets/img/lilac/gaveta-perfil-1200.webp": {
+      "width": 1200,
+      "height": 800,
+      "bytes": 59876
+    },
+    "assets/img/lilac/gaveta-perfil-2000.webp": {
+      "width": 1600,
+      "height": 1066,
+      "bytes": 80240
+    },
+    "assets/img/lilac/gaveta-frente-640.webp": {
+      "width": 640,
+      "height": 427,
+      "bytes": 6896
+    },
+    "assets/img/lilac/gaveta-frente-1200.webp": {
+      "width": 1200,
+      "height": 800,
+      "bytes": 15966
+    },
+    "assets/img/lilac/gaveta-frente-2000.webp": {
+      "width": 1600,
+      "height": 1067,
+      "bytes": 23022
+    },
+    "assets/img/lilac/ficha-tecnica-capa-480.webp": {
+      "width": 480,
+      "height": 679,
+      "bytes": 20826
+    },
+    "assets/img/estudio/toni-640.webp": {
+      "width": 640,
+      "height": 643,
+      "bytes": 52976
+    },
+    "assets/img/estudio/toni-1200.webp": {
+      "width": 1200,
+      "height": 1206,
+      "bytes": 135902
+    },
+    "assets/img/estudio/microfone-640.webp": {
+      "width": 640,
+      "height": 427,
+      "bytes": 8358
+    },
+    "assets/img/estudio/microfone-1200.webp": {
+      "width": 1200,
+      "height": 800,
+      "bytes": 17524
+    },
+    "assets/img/estudio/microfone-2000.webp": {
+      "width": 1600,
+      "height": 1067,
+      "bytes": 26446
+    },
+    "assets/img/estudio/mesa-640.webp": {
+      "width": 640,
+      "height": 427,
+      "bytes": 11612
+    },
+    "assets/img/estudio/mesa-1200.webp": {
+      "width": 1200,
+      "height": 801,
+      "bytes": 30564
+    },
+    "assets/img/estudio/mesa-2000.webp": {
+      "width": 1600,
+      "height": 1068,
+      "bytes": 47830
+    },
+    "favicon-32.png": {
+      "width": 32,
+      "height": 32,
+      "bytes": 1414
+    },
+    "apple-touch-icon.png": {
+      "width": 180,
+      "height": 180,
+      "bytes": 14440
+    },
+    "assets/img/brand/icon-192.png": {
+      "width": 192,
+      "height": 192,
+      "bytes": 15700
+    },
+    "assets/img/brand/icon-512.png": {
+      "width": 512,
+      "height": 512,
+      "bytes": 49956
+    },
+    "assets/docs/lilac-ficha-tecnica.pdf": {
+      "bytes": 947918
+    }
+  }
+}
