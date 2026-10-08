@@ -38,7 +38,7 @@ jobs:
       # through the Hostinger CDN host that its DNS zone points at.
       - name: Check DNS
         run: |
-          for q in "NS loudstudio.com" "A loudstudio.com" "AAAA loudstudio.com" "A www.loudstudio.com" "A loudstudio.com.cdn.hstgr.net"; do
+          for q in "NS loudstudio.com" "A loudstudio.com" "AAAA loudstudio.com" "A www.loudstudio.com" "A loudstudio.com.cdn.hstgr.net" "A darkgoldenrod-hedgehog-589801.hostingersite.com"; do
             echo "== dig $q"; dig +short $q || true
           done
           echo "== whois name servers"; whois loudstudio.com 2>/dev/null | grep -i -E "name server|nserver|status" | head -10 || true

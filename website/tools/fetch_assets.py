@@ -26,21 +26,25 @@ CACHE = TOOLS / ".cache"
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) loudstudio-site-assets/1.0"
 
 
-def download(url, dest, force=False):
+def download(bases, name, force=False):
+    """Fetch `name` from the first base URL that serves it; cache the result."""
+    dest = CACHE / name
     if dest.exists() and dest.stat().st_size > 0 and not force:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
-    last_error = None
-    for attempt in range(4):
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(req, timeout=60) as resp, open(dest, "wb") as f:
-                shutil.copyfileobj(resp, f)
-            return dest
-        except Exception as exc:  # network errors: retry with backoff
-            last_error = exc
-            time.sleep(2 ** (attempt + 1))
-    raise RuntimeError(f"Could not download {url}: {last_error}")
+    errors = []
+    for base in bases:
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(base + name, headers={"User-Agent": USER_AGENT})
+                with urllib.request.urlopen(req, timeout=30) as resp, open(dest, "wb") as f:
+                    shutil.copyfileobj(resp, f)
+                return dest
+            except Exception as exc:  # network errors: retry, then next base
+                errors.append(f"{base}{name}: {exc}")
+                time.sleep(2 * (attempt + 1))
+    dest.unlink(missing_ok=True)
+    raise RuntimeError("Could not download " + name + "\n  " + "\n  ".join(errors))
 
 
 def main_colours(img, count=6):
@@ -90,12 +94,13 @@ def resized(img, width):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--base-url", help="override base_url from assets.json")
+    parser.add_argument("--base-url", action="append",
+                        help="base URL to download from (repeatable; default: base_urls in assets.json)")
     parser.add_argument("--force", action="store_true", help="download again even if cached")
     args = parser.parse_args()
 
     config = json.loads((TOOLS / "assets.json").read_text())
-    base = args.base_url or config["base_url"]
+    bases = args.base_url or config["base_urls"]
     report = {"sources": {}, "outputs": {}}
 
     def record(path):
@@ -106,7 +111,7 @@ def main():
         }
 
     for item in config["images"]:
-        src = download(base + item["src"], CACHE / item["src"], args.force)
+        src = download(bases, item["src"], args.force)
         with Image.open(src) as opened:
             img = ImageOps.exif_transpose(opened)
             img.load()
@@ -127,7 +132,7 @@ def main():
         print(f"ok  {item['src']}  {img.width}x{img.height} {img.mode}")
 
     icons = config["icons"]
-    src = download(base + icons["src"], CACHE / icons["src"], args.force)
+    src = download(bases, icons["src"], args.force)
     with Image.open(src) as opened:
         icon = opened.convert("RGBA")
     report["sources"][icons["src"]] = {
@@ -144,7 +149,7 @@ def main():
     print(f"ok  {icons['src']}  icons")
 
     for item in config["files"]:
-        src = download(base + item["src"], CACHE / item["src"], args.force)
+        src = download(bases, item["src"], args.force)
         out = PUBLIC / item["out"]
         out.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(src, out)

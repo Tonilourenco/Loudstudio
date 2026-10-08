@@ -1,5 +1,9 @@
 {
-  "base_url": "https://loudstudio.com/wp-content/uploads/2021/10/",
+  "base_urls": [
+    "https://loudstudio.com/wp-content/uploads/2021/10/",
+    "http://loudstudio.com/wp-content/uploads/2021/10/",
+    "https://darkgoldenrod-hedgehog-589801.hostingersite.com/wp-content/uploads/2021/10/"
+  ],
   "images": [
     {"src": "loudstudio.png", "out": "assets/img/brand/loudstudio", "widths": [480, 960], "formats": ["png", "webp"]},
     {"src": "loudstudio-proaudio.png", "out": "assets/img/brand/loudstudio-proaudio", "widths": [480, 960], "formats": ["png", "webp"]},
