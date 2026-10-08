@@ -313,7 +313,7 @@
       "height": 1247,
       "bytes": 115380
     },
-    "assets/img/lilac/gaveta-topo-2000.webp": {
+    "assets/img/lilac/gaveta-topo-1600.webp": {
       "width": 1600,
       "height": 1663,
       "bytes": 143312
@@ -328,7 +328,7 @@
       "height": 800,
       "bytes": 59876
     },
-    "assets/img/lilac/gaveta-perfil-2000.webp": {
+    "assets/img/lilac/gaveta-perfil-1600.webp": {
       "width": 1600,
       "height": 1066,
       "bytes": 80240
@@ -343,7 +343,7 @@
       "height": 800,
       "bytes": 15966
     },
-    "assets/img/lilac/gaveta-frente-2000.webp": {
+    "assets/img/lilac/gaveta-frente-1600.webp": {
       "width": 1600,
       "height": 1067,
       "bytes": 23022
@@ -363,32 +363,32 @@
       "height": 1206,
       "bytes": 135902
     },
-    "assets/img/estudio/microfone-640.webp": {
+    "assets/img/estudio/mesa-640.webp": {
       "width": 640,
       "height": 427,
       "bytes": 8358
     },
-    "assets/img/estudio/microfone-1200.webp": {
+    "assets/img/estudio/mesa-1200.webp": {
       "width": 1200,
       "height": 800,
       "bytes": 17524
     },
-    "assets/img/estudio/microfone-2000.webp": {
+    "assets/img/estudio/mesa-1600.webp": {
       "width": 1600,
       "height": 1067,
       "bytes": 26446
     },
-    "assets/img/estudio/mesa-640.webp": {
+    "assets/img/estudio/auscultadores-640.webp": {
       "width": 640,
       "height": 427,
       "bytes": 11612
     },
-    "assets/img/estudio/mesa-1200.webp": {
+    "assets/img/estudio/auscultadores-1200.webp": {
       "width": 1200,
       "height": 801,
       "bytes": 30564
     },
-    "assets/img/estudio/mesa-2000.webp": {
+    "assets/img/estudio/auscultadores-1600.webp": {
       "width": 1600,
       "height": 1068,
       "bytes": 47830

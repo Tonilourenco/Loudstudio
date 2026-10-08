@@ -1,0 +1,40 @@
+name: Website check
+
+# Checks the website on every change: the pages in public/ match src/, every
+# link and image exists, and the contact form's PHP is valid.
+on:
+  push:
+    branches: [main, "claude/**"]
+    paths:
+      - "website/**"
+      - ".github/workflows/website-check.yml"
+  pull_request:
+    paths:
+      - "website/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Pages are built from src/
+        run: python website/tools/build.py --check
+
+      - name: Links, images and headings
+        run: python website/tools/check_site.py
+
+      - name: PHP syntax
+        run: php -l website/public/contacto.php
+
+      - name: JavaScript syntax
+        run: node --check website/public/assets/js/main.js

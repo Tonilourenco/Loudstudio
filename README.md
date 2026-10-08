@@ -222,3 +222,8 @@ pytest
 The analysis is tested against synthetic signals with known delay,
 harmonics and EQ (`tests/`). The `--simulate` back-end (`SimulatedDesk`)
 models gain, peaking EQ, saturation, latency, noise and polarity.
+
+## Website
+
+The new loudstudio.com website lives in [`website/`](website/README.md)
+(static HTML, a PHP contact form, no WordPress).

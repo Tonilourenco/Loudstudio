@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://loudstudio.com/</loc>
+  </url>
+  <url><loc>https://loudstudio.com/contactos/</loc>
+  </url>
+  <url><loc>https://loudstudio.com/estudio/</loc>
+  </url>
+  <url><loc>https://loudstudio.com/li-lac/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://loudstudio.com/li-lac/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://loudstudio.com/es/li-lac/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://loudstudio.com/li-lac/"/>
+  </url>
+  <url><loc>https://loudstudio.com/privacidade/</loc>
+  </url>
+  <url><loc>https://loudstudio.com/es/li-lac/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://loudstudio.com/li-lac/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://loudstudio.com/es/li-lac/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://loudstudio.com/li-lac/"/>
+  </url>
+</urlset>

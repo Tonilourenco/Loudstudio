@@ -1,0 +1,119 @@
+<!--meta
+{
+  "title": "Contactos · Loudstudio, Coimbra",
+  "description": "Fale com a Loudstudio: info@loudstudio.com, +351 965 243 633, Galerias Topázio, Sala 408, Coimbra. Sessões de estúdio e orçamentos Li.LAC.",
+  "path": "/contactos/",
+  "nav": "contactos"
+}
+-->
+<section class="hero hero--page" aria-labelledby="page-title">
+  <div class="container">
+    <p class="eyebrow">Contactos</p>
+    <h1 class="display hero__title" id="page-title">
+      <span class="line"><span>Vamos</span></span>
+      <span class="line"><span><span class="accent">falar.</span></span></span>
+    </h1>
+    <div class="hero__foot">
+      <p class="lead reveal">Para sessões no estúdio, orçamentos do Li.LAC ou qualquer outra questão. Respondemos por email ou telefone.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--line" aria-label="Contactos e formulário">
+  <div class="container contact">
+    <div class="reveal">
+      <ul class="contact-list">
+        <li>
+          <span class="contact-list__label">Email</span>
+          <a class="contact-list__value" href="mailto:info@loudstudio.com">info@loudstudio.com</a>
+        </li>
+        <li>
+          <span class="contact-list__label">Telefone</span>
+          <a class="contact-list__value" href="tel:+351965243633">+351 965 243 633</a>
+          <span class="contact-list__note">Chamada para a rede móvel nacional</span>
+        </li>
+        <li>
+          <span class="contact-list__label">Morada</span>
+          <span class="contact-list__value">Galerias Topázio, Sala 408<br>Coimbra, Portugal</span>
+        </li>
+        <li>
+          <span class="contact-list__label">Li.LAC</span>
+          <span class="contact-list__value">Portugal e Espanha</span>
+          <span class="contact-list__note">Representante oficial da LAC Labs</span>
+        </li>
+      </ul>
+      <div class="socials">
+        <a class="social" href="https://www.facebook.com/loudstudiocoimbra/" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A4.5 4.5 0 0 0 8 7.5V10H5.5v3.5H8V21h3.5v-7.5H14l.5-3.5h-3V8a1 1 0 0 1 1-1H15V3Z"/></svg>
+          Facebook
+        </a>
+      </div>
+      <div class="map" data-map-src="https://maps.google.com/maps?q=Galerias%20Top%C3%A1zio%2C%20Coimbra&amp;z=16&amp;output=embed" data-map-title="Mapa: Galerias Topázio, Coimbra">
+        <div class="map__placeholder">
+          <p class="map__note">O mapa é carregado a partir do Google Maps só quando carregar no botão.</p>
+          <div class="map__actions">
+            <button class="btn btn--ghost" type="button" data-map-load>Mostrar mapa</button>
+            <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&amp;query=Galerias%20Top%C3%A1zio%2C%20Coimbra" rel="noopener">Abrir no Google Maps</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" id="formulario">
+      <h2 class="h-lg">Enviar mensagem</h2>
+      <p class="muted stack-sm">Os campos com * são obrigatórios.</p>
+      <div class="notice notice--ok" data-result="ok" role="status" tabindex="-1" hidden>Obrigado! A sua mensagem foi enviada. Respondemos em breve.</div>
+      <div class="notice notice--error" data-result="error" role="alert" tabindex="-1" hidden>Não foi possível enviar a mensagem. Tente de novo ou escreva para info@loudstudio.com.</div>
+      <form class="form stack-md" action="/contacto.php" method="post" data-contact-form
+            data-msg-sending="A enviar…"
+            data-msg-ok="Obrigado! A sua mensagem foi enviada. Respondemos em breve."
+            data-msg-error="Não foi possível enviar a mensagem. Tente de novo ou escreva para info@loudstudio.com.">
+        <input type="hidden" name="lang" value="pt">
+        <input type="hidden" name="origem" value="/contactos/">
+        <input type="hidden" name="t" value="">
+        <div class="form__hp" aria-hidden="true">
+          <label for="website">Não preencher</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="form__row form__row--2">
+          <div class="field">
+            <label for="nome">Nome *</label>
+            <input type="text" id="nome" name="nome" autocomplete="name" required maxlength="120">
+          </div>
+          <div class="field">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" autocomplete="email" required maxlength="160">
+          </div>
+        </div>
+        <div class="form__row form__row--2">
+          <div class="field">
+            <label for="telefone">Telefone <span class="optional">(opcional)</span></label>
+            <input type="tel" id="telefone" name="telefone" autocomplete="tel" maxlength="40">
+          </div>
+          <div class="field">
+            <label for="assunto">Assunto</label>
+            <select id="assunto" name="assunto">
+              <option value="estudio">Sessão de estúdio</option>
+              <option value="lilac">Orçamento Li.LAC</option>
+              <option value="outro">Outro assunto</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="mensagem">Mensagem *</label>
+          <textarea id="mensagem" name="mensagem" required minlength="10" maxlength="5000"></textarea>
+        </div>
+        <label class="check">
+          <input type="checkbox" name="consentimento" value="1" required>
+          <span>Aceito que a Loudstudio use estes dados para responder ao meu contacto, como descrito na <a href="/privacidade/">política de privacidade</a>. *</span>
+        </label>
+        <div class="form__foot">
+          <button class="btn btn--primary" type="submit">Enviar mensagem
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="form__status" role="status" aria-live="polite" tabindex="-1"></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

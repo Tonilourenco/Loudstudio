@@ -8,13 +8,13 @@
     {"src": "loudstudio.png", "out": "assets/img/brand/loudstudio", "widths": [480, 960], "formats": ["png", "webp"]},
     {"src": "loudstudio-proaudio.png", "out": "assets/img/brand/loudstudio-proaudio", "widths": [480, 960], "formats": ["png", "webp"]},
     {"src": "li-lac-logo-white.png", "out": "assets/img/brand/lilac-logo-white", "widths": [384, 768], "formats": ["png", "webp"]},
-    {"src": "li-lac-gaveta-topo-min.png", "out": "assets/img/lilac/gaveta-topo", "widths": [640, 1200, 2000], "formats": ["webp"]},
-    {"src": "lilac-perfil-gaveta.png", "out": "assets/img/lilac/gaveta-perfil", "widths": [640, 1200, 2000], "formats": ["webp"]},
-    {"src": "lilac-front-2.png", "out": "assets/img/lilac/gaveta-frente", "widths": [640, 1200, 2000], "formats": ["webp"]},
+    {"src": "li-lac-gaveta-topo-min.png", "out": "assets/img/lilac/gaveta-topo", "widths": [640, 1200, 1600], "formats": ["webp"]},
+    {"src": "lilac-perfil-gaveta.png", "out": "assets/img/lilac/gaveta-perfil", "widths": [640, 1200, 1600], "formats": ["webp"]},
+    {"src": "lilac-front-2.png", "out": "assets/img/lilac/gaveta-frente", "widths": [640, 1200, 1600], "formats": ["webp"]},
     {"src": "LiLAC_PT2_v2_20211001-pdf.jpg", "out": "assets/img/lilac/ficha-tecnica-capa", "widths": [480], "formats": ["webp"]},
     {"src": "toni.jpg", "out": "assets/img/estudio/toni", "widths": [640, 1200], "formats": ["webp"]},
-    {"src": "leo-wieling-Sby_GQz1-5E-unsplash.jpg", "out": "assets/img/estudio/microfone", "widths": [640, 1200, 2000], "formats": ["webp"]},
-    {"src": "blaz-photo-cZWZjymwI9o-unsplash.jpg", "out": "assets/img/estudio/mesa", "widths": [640, 1200, 2000], "formats": ["webp"]}
+    {"src": "leo-wieling-Sby_GQz1-5E-unsplash.jpg", "out": "assets/img/estudio/mesa", "widths": [640, 1200, 1600], "formats": ["webp"]},
+    {"src": "blaz-photo-cZWZjymwI9o-unsplash.jpg", "out": "assets/img/estudio/auscultadores", "widths": [640, 1200, 1600], "formats": ["webp"]}
   ],
   "icons": {
     "src": "favicon-loudstudio.png",
