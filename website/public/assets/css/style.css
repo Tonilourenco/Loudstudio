@@ -1210,6 +1210,6 @@ a.contact-list__value:hover { color: var(--accent); }
 .stack-sm { margin-top: 12px; }
 
 /* Space between a heading and the text right after it */
-.h-xl + .lead, .h-lg + .lead, .h-lg + p, .h-md + p, .person__head + .lead { margin-top: 24px; }
+.h-xl + .lead, .h-lg + .lead, .h-lg + p, .h-md + p, .person__head + p { margin-top: 24px; }
 .lead + p { margin-top: 20px; }
 .hero__title.h-xl { max-width: none; }
