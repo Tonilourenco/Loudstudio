@@ -40,7 +40,7 @@ def fit(img, max_w, max_h):
 def studio():
     canvas = Image.new("RGBA", (W, H), BG + (255,))
     canvas.alpha_composite(glow((168, 146, 94), (980, 640), 420, 60))
-    logo = fit(Image.open(IMG / "brand" / "loudstudio-proaudio-960.png").convert("RGBA"), 470, 360)
+    logo = fit(Image.open(IMG / "brand" / "loudstudio-gold-960.png").convert("RGBA"), 470, 360)
     canvas.alpha_composite(logo, (70, (H - logo.height) // 2))
 
     draw = ImageDraw.Draw(canvas)

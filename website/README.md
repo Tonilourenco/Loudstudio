@@ -20,7 +20,7 @@ website/
     check_site.py    ← verifica links, imagens, âncoras e títulos
     fetch_assets.py  ← descarrega imagens e PDF do site antigo e otimiza-os
     make_og.py       ← gera as imagens de partilha (Facebook, WhatsApp…)
-    make_gold_icons.py ← gera o símbolo dourado (favicon e cabeçalho)
+    make_gold_brand.py ← gera o símbolo e o logótipo do estúdio em dourado
 ```
 
 ## Editar um texto

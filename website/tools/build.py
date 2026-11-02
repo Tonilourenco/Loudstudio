@@ -34,6 +34,7 @@ DEFAULTS = {
     "alternates": {},
     "robots": "index,follow",
     "body_class": "",
+    "brand": "studio",       # "studio" or "proaudio" (the Li.LAC pages)
 }
 OG_LOCALE = {"pt-PT": "pt_PT", "es": "es_ES"}
 
@@ -65,6 +66,15 @@ def render(meta, content, version):
     def current(m):
         return ' aria-current="page"' if m.group(1) == meta["nav"] else ""
     header = re.sub(r"\{\{current:(\w+)\}\}", current, header)
+
+    # Studio and Pro Audio (Li.LAC) have their own logo and wording:
+    # keep <!--brand:x-->...<!--/brand:x--> only when x is this page's brand.
+    def brand(m):
+        return m.group(2) if m.group(1) == meta["brand"] else ""
+    header, footer = (
+        re.sub(r"<!--brand:(\w+)-->(.*?)<!--/brand:\1-->", brand, part, flags=re.S)
+        for part in (header, footer)
+    )
 
     alternates = "".join(
         f'\n<link rel="alternate" hreflang="{lang}" href="{SITE_URL}{href}">'
