@@ -39,15 +39,15 @@ def fit(img, max_w, max_h):
 
 def studio():
     canvas = Image.new("RGBA", (W, H), BG + (255,))
-    canvas.alpha_composite(glow((0, 174, 239), (980, 640), 420, 70))
-    logo = fit(Image.open(IMG / "brand" / "loudstudio-960.png").convert("RGBA"), 470, 360)
+    canvas.alpha_composite(glow((168, 146, 94), (980, 640), 420, 60))
+    logo = fit(Image.open(IMG / "brand" / "loudstudio-proaudio-960.png").convert("RGBA"), 470, 360)
     canvas.alpha_composite(logo, (70, (H - logo.height) // 2))
 
     draw = ImageDraw.Draw(canvas)
     small = font("manrope-latin-var.woff2", 24, 700)
     big = font("archivo-latin-var.woff2", 76, 800, 112)
     x = 610
-    draw.text((x, 196), "ESTÚDIO DE PRODUÇÃO ÁUDIO · COIMBRA", font=small, fill=(0, 174, 239))
+    draw.text((x, 196), "ESTÚDIO DE PRODUÇÃO ÁUDIO · COIMBRA", font=small, fill=(168, 146, 94))
     draw.text((x, 240), "Em alto", font=big, fill=(243, 244, 246))
     draw.text((x, 322), "e bom som.", font=big, fill=(243, 244, 246))
     draw.text((x, 436), "Gravação · Mistura · Masterização · Produção", font=font("manrope-latin-var.woff2", 22, 500), fill=(180, 185, 193))

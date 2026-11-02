@@ -28,10 +28,11 @@
   --text: #f3f4f6;
   --text-2: #b4b9c1;
   --text-3: #8a9099;
-  --accent: #00aeef;
-  --accent-rgb: 0, 174, 239;
-  --accent-hover: #5ccbf5;
-  --accent-ink: #04121a;
+  --gold: #a8925e;              /* the gold of the logo, lifted a little for legibility */
+  --accent: var(--gold);
+  --accent-rgb: 168, 146, 94;
+  --accent-hover: #c5b07e;
+  --accent-ink: #15120b;
   --uv: #b06bff;
   --uv-rgb: 176, 107, 255;
 
@@ -40,7 +41,7 @@
   --light-line: #d5d9df;
   --light-text: #121417;
   --light-text-2: #434951;
-  --light-accent: #0a6aad;
+  --light-accent: #6f5d33;
 
   --font-display: "Archivo", "Helvetica Neue", Helvetica, sans-serif;
   --font-body: "Manrope", "Helvetica Neue", Helvetica, sans-serif;
@@ -1108,7 +1109,7 @@ a.contact-list__value:hover { color: var(--accent); }
 .lead + .btn-row, .lead + .download { margin-top: 32px; }
 .stack-lg { margin-top: clamp(56px, 8vw, 104px); }
 
-/* ---------- Li.LAC theme: the product's own UV violet replaces the studio blue ---------- */
+/* ---------- Li.LAC theme: the product's own UV violet replaces the studio gold ---------- */
 
 .theme-lilac {
   --accent: var(--uv);
@@ -1116,7 +1117,7 @@ a.contact-list__value:hover { color: var(--accent); }
   --accent-hover: #c99bff;
   --accent-ink: #12061f;
 }
-.theme-lilac .brand__studio { color: #00aeef; }
+.theme-lilac .brand__studio { color: var(--gold); }
 .theme-lilac { --light-accent: #7330c9; }
 
 .area--product .media img { object-fit: contain; padding: 6% 6% 34%; }

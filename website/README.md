@@ -20,6 +20,7 @@ website/
     check_site.py    ← verifica links, imagens, âncoras e títulos
     fetch_assets.py  ← descarrega imagens e PDF do site antigo e otimiza-os
     make_og.py       ← gera as imagens de partilha (Facebook, WhatsApp…)
+    make_gold_icons.py ← gera o símbolo dourado (favicon e cabeçalho)
 ```
 
 ## Editar um texto
@@ -127,7 +128,8 @@ exemplo num ramo próprio gerado por um workflow). Fica para uma fase seguinte.
 - **Fontes**: Archivo e Manrope (licença SIL OFL), alojadas no próprio site (sem
   Google Fonts, por causa do RGPD).
 - **Mapa**: só carrega o Google Maps quando o visitante carrega em "Mostrar mapa".
-- **Cores**: azul do logótipo `#00AEEF`; nas páginas Li.LAC, o violeta UV `#B06BFF`
+- **Cores**: dourado do logótipo (`#A8925E`, um pouco mais claro do que no logótipo para se ler bem);
+  nas páginas Li.LAC, o violeta UV `#B06BFF`
   (cor da própria marca Li.LAC).
 
 ## Por confirmar
