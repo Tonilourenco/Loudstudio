@@ -7,7 +7,8 @@ Every page starts with a JSON block in an HTML comment:
     -->
 
 and the rest of the file is the page's <main> content. The layout and the
-header/footer partials live in website/src. Output goes to website/public
+header/footer partials (header.<brand>.<lang>.html, footer.<brand>.<lang>.html,
+brand "studio" or "proaudio") live in website/src. Output goes to website/public
 with the same relative path (pages/estudio/index.html -> public/estudio/index.html).
 
 Usage:  python website/tools/build.py          write the pages
@@ -34,7 +35,7 @@ DEFAULTS = {
     "alternates": {},
     "robots": "index,follow",
     "body_class": "",
-    "brand": "studio",       # "studio" or "proaudio" (the Li.LAC pages)
+    "brand": "studio",       # "studio" or "proaudio" (the commercial Li.LAC side)
 }
 OG_LOCALE = {"pt-PT": "pt_PT", "es": "es_ES"}
 
@@ -58,23 +59,15 @@ def parse_page(path):
 
 
 def render(meta, content, version):
+    # Studio and Pro Audio are kept apart: each has its own header and footer
     short = meta["lang"].split("-")[0]
-    header = (SRC / f"header.{short}.html").read_text(encoding="utf-8")
-    footer = (SRC / f"footer.{short}.html").read_text(encoding="utf-8")
+    header = (SRC / f"header.{meta['brand']}.{short}.html").read_text(encoding="utf-8")
+    footer = (SRC / f"footer.{meta['brand']}.{short}.html").read_text(encoding="utf-8")
 
     # aria-current on the active navigation item
     def current(m):
         return ' aria-current="page"' if m.group(1) == meta["nav"] else ""
     header = re.sub(r"\{\{current:(\w+)\}\}", current, header)
-
-    # Studio and Pro Audio (Li.LAC) have their own logo and wording:
-    # keep <!--brand:x-->...<!--/brand:x--> only when x is this page's brand.
-    def brand(m):
-        return m.group(2) if m.group(1) == meta["brand"] else ""
-    header, footer = (
-        re.sub(r"<!--brand:(\w+)-->(.*?)<!--/brand:\1-->", brand, part, flags=re.S)
-        for part in (header, footer)
-    )
 
     alternates = "".join(
         f'\n<link rel="alternate" hreflang="{lang}" href="{SITE_URL}{href}">'

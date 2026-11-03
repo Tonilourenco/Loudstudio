@@ -13,22 +13,24 @@ website/
     assets/          ← css, js, fontes, imagens, PDF da ficha técnica
   src/               ← onde se editam as páginas
     layout.html      ← <head> comum a todas as páginas
-    header.pt.html, footer.pt.html, header.es.html, footer.es.html
+    header.studio.pt.html, footer.studio.pt.html          ← estúdio (azul)
+    header.proaudio.pt.html, footer.proaudio.pt.html      ← Pro Audio / Li.LAC (dourado)
+    header.proaudio.es.html, footer.proaudio.es.html      ← Pro Audio em espanhol
     pages/           ← conteúdo de cada página
   tools/
     build.py         ← junta src/ e escreve as páginas em public/
     check_site.py    ← verifica links, imagens, âncoras e títulos
     fetch_assets.py  ← descarrega imagens e PDF do site antigo e otimiza-os
     make_og.py       ← gera as imagens de partilha (Facebook, WhatsApp…)
-    make_gold_brand.py ← gera o símbolo e o logótipo do estúdio em dourado
 ```
 
 ## Editar um texto
 
 1. Abrir a página em `src/pages/` (por exemplo `src/pages/li-lac/index.html`).
    O bloco `<!--meta ... -->` no topo tem o título e a descrição para o Google.
-2. Menu e rodapé estão em `src/header.pt.html` e `src/footer.pt.html`
-   (versão espanhola: `*.es.html`).
+2. Menu e rodapé estão em `src/header.*.html` e `src/footer.*.html`: um par para o
+   estúdio e outro para o Pro Audio. Cada página diz a que lado pertence com
+   `"brand": "studio"` (por omissão) ou `"brand": "proaudio"` no bloco `<!--meta`.
 3. Gerar as páginas e verificar:
 
    ```sh
@@ -128,9 +130,13 @@ exemplo num ramo próprio gerado por um workflow). Fica para uma fase seguinte.
 - **Fontes**: Archivo e Manrope (licença SIL OFL), alojadas no próprio site (sem
   Google Fonts, por causa do RGPD).
 - **Mapa**: só carrega o Google Maps quando o visitante carrega em "Mostrar mapa".
-- **Cores**: dourado do logótipo (`#A8925E`, um pouco mais claro do que no logótipo para se ler bem);
-  nas páginas Li.LAC, o violeta UV `#B06BFF`
-  (cor da própria marca Li.LAC).
+- **Dois lados separados**: o estúdio (Início, Estúdio, Contactos) em azul, com o
+  logótipo azul; o Pro Audio, a área comercial (Li.LAC, em português e espanhol),
+  em dourado, com o logótipo dourado "pro audio" e formulário próprio.
+- **Logótipos**: usam-se sempre os ficheiros originais (em PNG, sem perda de
+  qualidade), nunca redesenhados, recoloridos ou escritos com outra letra.
+- **Cores**: azul do logótipo `#00AEEF` no estúdio; no Pro Audio, `#A8925E`, o
+  dourado do logótipo um pouco mais claro para os textos pequenos se lerem bem.
 
 ## Por confirmar
 

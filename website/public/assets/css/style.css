@@ -28,20 +28,18 @@
   --text: #f3f4f6;
   --text-2: #b4b9c1;
   --text-3: #8a9099;
-  --gold: #a8925e;              /* the gold of the logo, lifted a little for legibility */
-  --accent: var(--gold);
-  --accent-rgb: 168, 146, 94;
-  --accent-hover: #c5b07e;
-  --accent-ink: #15120b;
-  --uv: #b06bff;
-  --uv-rgb: 176, 107, 255;
+  /* Studio: the blue of the original logo */
+  --accent: #00aeef;
+  --accent-rgb: 0, 174, 239;
+  --accent-hover: #5ccbf5;
+  --accent-ink: #04121a;
 
   --light-bg: #eef0f3;
   --light-surface: #ffffff;
   --light-line: #d5d9df;
   --light-text: #121417;
   --light-text-2: #434951;
-  --light-accent: #6f5d33;
+  --light-accent: #0a6aad;
 
   --font-display: "Archivo", "Helvetica Neue", Helvetica, sans-serif;
   --font-body: "Manrope", "Helvetica Neue", Helvetica, sans-serif;
@@ -266,45 +264,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
   gap: 24px;
 }
 
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--text);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 110%;
-  font-size: 24px;
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-.brand__mark { width: 34px; height: 34px; flex: none; margin-right: -2px; }
-.brand__studio { color: var(--accent); }
-.brand__sub {
-  align-self: center;
-  margin-left: 4px; padding-left: 10px;
-  border-left: 1px solid var(--line);
-  font-family: var(--font-body); font-stretch: 100%;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--text-2);
-  white-space: nowrap;
-}
-/* Phones: "pro audio" goes under the wordmark so the menu button keeps its room */
-@media (max-width: 559px) {
-  .brand { position: relative; }
-  .brand__sub {
-    position: absolute; left: 44px; top: calc(100% + 1px);
-    margin: 0; padding: 0; border: 0;
-    font-size: 10px; line-height: 1;
-  }
-}
-/* Very narrow phones: the menu button shows only its icon (the word stays for screen readers) */
-@media (max-width: 359px) {
-  .menu-toggle__label {
-    position: absolute; width: 1px; height: 1px; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap;
-  }
+/* The logo is always the original artwork, never redrawn or recoloured */
+.brand { display: inline-flex; align-items: center; flex: none; }
+.brand__logo { height: 54px; width: auto; }
+@media (min-width: 960px) {
+  :root { --header-h: 84px; }
+  .brand__logo { height: 62px; }
 }
 
 .nav { display: none; }
@@ -1071,21 +1036,9 @@ a.contact-list__value:hover { color: var(--accent); }
 .footer-brand p { color: var(--text-2); max-width: 34ch; margin-top: 18px; }
 .footer-logo { width: 220px; }
 
-.footer-word {
-  margin: clamp(56px, 8vw, 112px) 0 24px;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 125%;
-  font-size: clamp(48px, 14.2vw, 224px);
-  line-height: 0.8;
-  letter-spacing: -0.055em;
-  color: var(--surface-2);
-  white-space: nowrap;
-  user-select: none;
-}
-.footer-word span { color: rgba(var(--accent-rgb), 0.22); }
 
 .footer-bottom {
+  margin-top: clamp(56px, 8vw, 96px);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -1129,7 +1082,7 @@ a.contact-list__value:hover { color: var(--accent); }
 }
 
 @media print {
-  .site-header, .mobile-menu, .meter, .marquee, .map, .form, .site-footer .footer-word { display: none !important; }
+  .site-header, .mobile-menu, .meter, .marquee, .map, .form { display: none !important; }
   body { background: #fff; color: #000; }
 }
 
@@ -1140,26 +1093,17 @@ a.contact-list__value:hover { color: var(--accent); }
 .lead + .btn-row, .lead + .download { margin-top: 32px; }
 .stack-lg { margin-top: clamp(56px, 8vw, 104px); }
 
-/* ---------- Li.LAC theme: the product's own UV violet replaces the studio gold ---------- */
+/* ---------- Pro Audio (Li.LAC, the commercial side): the gold of the original Pro Audio logo ---------- */
 
-.theme-lilac {
-  --accent: var(--uv);
-  --accent-rgb: var(--uv-rgb);
-  --accent-hover: #c99bff;
-  --accent-ink: #12061f;
+.theme-proaudio {
+  --accent: #a8925e;             /* logo gold, a little lighter so small text stays readable */
+  --accent-rgb: 168, 146, 94;
+  --accent-hover: #c5b07e;
+  --accent-ink: #15120b;
+  --light-accent: #6f5d33;
 }
-.theme-lilac .brand__studio { color: var(--gold); }
-.theme-lilac { --light-accent: #7330c9; }
+.theme-proaudio .section--light .feature__icon { background: rgba(111, 93, 51, 0.12); }
 
-.area--product .media img { object-fit: contain; padding: 6% 6% 34%; }
-.area--product .media::after { background: linear-gradient(to top, rgba(8, 9, 11, 0.9) 0%, rgba(8, 9, 11, 0.2) 45%, transparent 100%); }
-.area--product:hover .media img { transform: scale(1.04) translateY(-1%); }
-
-.glow-uv {
-  background:
-    radial-gradient(60% 55% at 50% 60%, rgba(var(--uv-rgb), 0.38) 0%, rgba(var(--uv-rgb), 0.08) 55%, transparent 75%),
-    var(--surface);
-}
 .media--product { aspect-ratio: auto; background: transparent; overflow: visible; }
 .media--product img { height: auto; object-fit: contain; }
 
@@ -1168,9 +1112,9 @@ a.contact-list__value:hover { color: var(--accent); }
   border-radius: var(--radius-lg);
   padding: clamp(24px, 5vw, 72px);
   background:
-    radial-gradient(55% 60% at 50% 55%, rgba(var(--uv-rgb), 0.45) 0%, rgba(var(--uv-rgb), 0.1) 50%, transparent 72%),
-    linear-gradient(180deg, #15121c 0%, #0e0d12 100%);
-  border: 1px solid #241f2e;
+    radial-gradient(55% 60% at 50% 55%, rgba(var(--accent-rgb), 0.32) 0%, rgba(var(--accent-rgb), 0.08) 50%, transparent 72%),
+    linear-gradient(180deg, #16171a 0%, #0e0f11 100%);
+  border: 1px solid var(--line);
   overflow: hidden;
 }
 .product-stage img { width: 100%; height: auto; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6)); }
@@ -1213,3 +1157,17 @@ a.contact-list__value:hover { color: var(--accent); }
 .h-xl + .lead, .h-lg + .lead, .h-lg + p, .h-md + p, .person__head + p { margin-top: 24px; }
 .lead + p { margin-top: 20px; }
 .hero__title.h-xl { max-width: none; }
+
+/* ---------- Link from the studio to Pro Audio ---------- */
+.proaudio-link {
+  display: grid; gap: 24px; align-items: center;
+  padding: clamp(24px, 4vw, 40px);
+  border: 1px solid var(--line); border-radius: var(--radius-lg);
+  text-decoration: none; color: var(--text);
+  transition: border-color .3s var(--ease);
+}
+.proaudio-link:hover { border-color: #a8925e; }
+.proaudio-link__logo { width: 150px; }
+.proaudio-link p { color: var(--text-2); max-width: 52ch; }
+.proaudio-link .link-arrow { color: #c5b07e; }
+@media (min-width: 760px) { .proaudio-link { grid-template-columns: 170px minmax(0, 1fr) auto; gap: 40px; } }

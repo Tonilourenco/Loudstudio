@@ -39,15 +39,15 @@ def fit(img, max_w, max_h):
 
 def studio():
     canvas = Image.new("RGBA", (W, H), BG + (255,))
-    canvas.alpha_composite(glow((168, 146, 94), (980, 640), 420, 60))
-    logo = fit(Image.open(IMG / "brand" / "loudstudio-gold-960.png").convert("RGBA"), 470, 360)
+    canvas.alpha_composite(glow((0, 174, 239), (980, 640), 420, 70))
+    logo = fit(Image.open(IMG / "brand" / "loudstudio-960.png").convert("RGBA"), 470, 360)
     canvas.alpha_composite(logo, (70, (H - logo.height) // 2))
 
     draw = ImageDraw.Draw(canvas)
     small = font("manrope-latin-var.woff2", 24, 700)
     big = font("archivo-latin-var.woff2", 76, 800, 112)
     x = 610
-    draw.text((x, 196), "ESTÚDIO DE PRODUÇÃO ÁUDIO · COIMBRA", font=small, fill=(168, 146, 94))
+    draw.text((x, 196), "ESTÚDIO DE PRODUÇÃO ÁUDIO · COIMBRA", font=small, fill=(0, 174, 239))
     draw.text((x, 240), "Em alto", font=big, fill=(243, 244, 246))
     draw.text((x, 322), "e bom som.", font=big, fill=(243, 244, 246))
     draw.text((x, 436), "Gravação · Mistura · Masterização · Produção", font=font("manrope-latin-var.woff2", 22, 500), fill=(180, 185, 193))
@@ -55,15 +55,15 @@ def studio():
 
 
 LILAC_TEXT = {
-    "pt": ("Desinfeção de", "microfones por UV-C", "Representante oficial LAC Labs", "Portugal e Espanha · loudstudio.com"),
-    "es": ("Desinfección de", "micrófonos por UV-C", "Distribuidor oficial LAC Labs", "Portugal y España · loudstudio.com"),
+    "pt": ("Desinfeção de", "microfones por UV-C", "Loudstudio Pro Audio · representante oficial LAC Labs", "Portugal e Espanha · loudstudio.com/li-lac"),
+    "es": ("Desinfección de", "micrófonos por UV-C", "Loudstudio Pro Audio · distribuidor oficial LAC Labs", "Portugal y España · loudstudio.com/es/li-lac"),
 }
 
 
 def lilac(lang="pt"):
     line1, line2, line3, line4 = LILAC_TEXT[lang]
-    canvas = Image.new("RGBA", (W, H), (14, 13, 18, 255))
-    canvas.alpha_composite(glow((176, 107, 255), (840, 330), 360, 120))
+    canvas = Image.new("RGBA", (W, H), (14, 14, 16, 255))
+    canvas.alpha_composite(glow((168, 146, 94), (840, 330), 360, 90))
     product = fit(Image.open(IMG / "lilac" / "gaveta-perfil-1200.webp").convert("RGBA"), 640, 470)
     canvas.alpha_composite(product, (W - product.width - 30, (H - product.height) // 2 + 20))
     logo = fit(Image.open(IMG / "brand" / "lilac-logo-white-768.png").convert("RGBA"), 300, 150)
@@ -73,7 +73,7 @@ def lilac(lang="pt"):
     big = font("archivo-latin-var.woff2", 52, 800, 108)
     draw.text((70, 300), line1, font=big, fill=(243, 244, 246))
     draw.text((70, 358), line2, font=big, fill=(243, 244, 246))
-    draw.text((70, 440), line3, font=font("manrope-latin-var.woff2", 24, 700), fill=(201, 155, 255))
+    draw.text((70, 440), line3, font=font("manrope-latin-var.woff2", 22, 700), fill=(197, 176, 126))
     draw.text((70, 474), line4, font=font("manrope-latin-var.woff2", 24, 500), fill=(180, 185, 193))
     return canvas
 

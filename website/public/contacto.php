@@ -17,11 +17,11 @@ const MAIL_TO = 'info@loudstudio.com';
 const MAIL_FROM = 'info@loudstudio.com';
 const RATE_LIMIT = 5;
 const MIN_SECONDS = 3;
-const RETURN_PAGES = ['/contactos/', '/es/li-lac/'];
+const RETURN_PAGES = ['/contactos/', '/li-lac/', '/es/li-lac/'];
 
 const SUBJECTS = [
     'estudio' => 'Estúdio',
-    'lilac' => 'Li.LAC: pedido de orçamento',
+    'lilac' => 'Pro Audio · Li.LAC: pedido de orçamento',
     'outro' => 'Outro assunto',
 ];
 
@@ -118,7 +118,7 @@ if (count($recent) >= RATE_LIMIT) {
 
 $subject = '[loudstudio.com] ' . SUBJECTS[$topic] . ' — ' . $name;
 $body = implode("\n", [
-    'Nova mensagem do formulário de ' . ($lang === 'es' ? 'loudstudio.com/es/li-lac/ (espanhol)' : 'loudstudio.com/contactos/'),
+    'Nova mensagem do formulário de loudstudio.com' . $returnTo . ($lang === 'es' ? ' (espanhol)' : ''),
     '',
     'Nome:     ' . $name,
     'Email:    ' . $email,
