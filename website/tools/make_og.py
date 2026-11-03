@@ -62,8 +62,8 @@ LILAC_TEXT = {
 
 def lilac(lang="pt"):
     line1, line2, line3, line4 = LILAC_TEXT[lang]
-    canvas = Image.new("RGBA", (W, H), (14, 14, 16, 255))
-    canvas.alpha_composite(glow((168, 146, 94), (840, 330), 360, 90))
+    canvas = Image.new("RGBA", (W, H), (14, 13, 18, 255))
+    canvas.alpha_composite(glow((176, 107, 255), (840, 330), 360, 120))
     product = fit(Image.open(IMG / "lilac" / "gaveta-perfil-1200.webp").convert("RGBA"), 640, 470)
     canvas.alpha_composite(product, (W - product.width - 30, (H - product.height) // 2 + 20))
     logo = fit(Image.open(IMG / "brand" / "lilac-logo-white-768.png").convert("RGBA"), 300, 150)
@@ -73,7 +73,7 @@ def lilac(lang="pt"):
     big = font("archivo-latin-var.woff2", 52, 800, 108)
     draw.text((70, 300), line1, font=big, fill=(243, 244, 246))
     draw.text((70, 358), line2, font=big, fill=(243, 244, 246))
-    draw.text((70, 440), line3, font=font("manrope-latin-var.woff2", 22, 700), fill=(197, 176, 126))
+    draw.text((70, 440), line3, font=font("manrope-latin-var.woff2", 22, 700), fill=(201, 155, 255))
     draw.text((70, 474), line4, font=font("manrope-latin-var.woff2", 24, 500), fill=(180, 185, 193))
     return canvas
 

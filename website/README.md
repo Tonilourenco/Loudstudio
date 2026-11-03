@@ -132,11 +132,11 @@ exemplo num ramo próprio gerado por um workflow). Fica para uma fase seguinte.
 - **Mapa**: só carrega o Google Maps quando o visitante carrega em "Mostrar mapa".
 - **Dois lados separados**: o estúdio (Início, Estúdio, Contactos) em azul, com o
   logótipo azul; o Pro Audio, a área comercial (Li.LAC, em português e espanhol),
-  em dourado, com o logótipo dourado "pro audio" e formulário próprio.
+  com o logótipo dourado "pro audio", o tom lilás do Li.LAC e formulário próprio.
 - **Logótipos**: usam-se sempre os ficheiros originais (em PNG, sem perda de
   qualidade), nunca redesenhados, recoloridos ou escritos com outra letra.
-- **Cores**: azul do logótipo `#00AEEF` no estúdio; no Pro Audio, `#A8925E`, o
-  dourado do logótipo um pouco mais claro para os textos pequenos se lerem bem.
+- **Cores**: azul do logótipo `#00AEEF` no estúdio; nas páginas Li.LAC (Pro Audio),
+  o lilás do Li.LAC `#B06BFF`. Os logótipos mantêm sempre as cores originais.
 
 ## Por confirmar
 

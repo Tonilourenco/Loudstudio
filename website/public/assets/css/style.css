@@ -1093,16 +1093,18 @@ a.contact-list__value:hover { color: var(--accent); }
 .lead + .btn-row, .lead + .download { margin-top: 32px; }
 .stack-lg { margin-top: clamp(56px, 8vw, 104px); }
 
-/* ---------- Pro Audio (Li.LAC, the commercial side): the gold of the original Pro Audio logo ---------- */
+/* ---------- Pro Audio (Li.LAC, the commercial side) ----------
+   The logos stay the original gold Pro Audio artwork; the page itself uses
+   the lilac of the Li.LAC product (its display and brochure). */
 
 .theme-proaudio {
-  --accent: #a8925e;             /* logo gold, a little lighter so small text stays readable */
-  --accent-rgb: 168, 146, 94;
-  --accent-hover: #c5b07e;
-  --accent-ink: #15120b;
-  --light-accent: #6f5d33;
+  --accent: #b06bff;
+  --accent-rgb: 176, 107, 255;
+  --accent-hover: #c99bff;
+  --accent-ink: #12061f;
+  --light-accent: #7330c9;
 }
-.theme-proaudio .section--light .feature__icon { background: rgba(111, 93, 51, 0.12); }
+.theme-proaudio .section--light .feature__icon { background: rgba(115, 48, 201, 0.1); }
 
 .media--product { aspect-ratio: auto; background: transparent; overflow: visible; }
 .media--product img { height: auto; object-fit: contain; }
@@ -1113,7 +1115,7 @@ a.contact-list__value:hover { color: var(--accent); }
   padding: clamp(24px, 5vw, 72px);
   background:
     radial-gradient(55% 60% at 50% 55%, rgba(var(--accent-rgb), 0.32) 0%, rgba(var(--accent-rgb), 0.08) 50%, transparent 72%),
-    linear-gradient(180deg, #16171a 0%, #0e0f11 100%);
+    linear-gradient(180deg, #15121c 0%, #0e0d12 100%);
   border: 1px solid var(--line);
   overflow: hidden;
 }
